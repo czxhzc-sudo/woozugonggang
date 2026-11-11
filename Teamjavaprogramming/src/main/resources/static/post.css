@@ -1,0 +1,17 @@
+.hashtag-group {
+    display: none;
+    margin-top: 10px;
+}
+
+.hashtag-group label {
+    margin-right: 10px;
+}
+
+.gender-setting {
+    display: none;
+    margin-top: 10px;
+}
+
+.time-setting {
+    margin-bottom: 15px;
+}

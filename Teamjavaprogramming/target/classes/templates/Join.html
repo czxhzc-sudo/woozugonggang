@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <link rel="stylesheet" th:href="@{/join.css}">
+</head>
+<body>
+
+<h1>회원가입</h1>
+
+<form id="joinForm" th:action="@{/member/join}" method="post">
+    <input type="hidden" id="stdCon" name="stdCon">
+    <input type="hidden" id="stdCategory" name="stdCategory">
+    <input type="hidden" id="stdTime" name="stdTime">
+    <div>
+        <div class="input-row">
+            <label>아이디</label>
+            <input type="text" id="userName" name="userName" required>
+            <button type="button" class="check-button" onclick="checkUserName()">
+                중복확인
+            </button>
+        </div>
+        <div class="help-text">
+            영문 + 숫자 조합으로 입력해주세요.
+        </div>
+        <div id="usernameResult" class="check-result"></div>
+    </div>
+    <div>
+        <label>비밀번호</label>
+        <input type="password" id="password" name="password" required>
+        <div class="help-text">
+            영문 + 숫자 + 특수문자 조합으로 입력해주세요.
+        </div>
+    </div>
+    <div>
+        <label>비밀번호 확인</label>
+        <input type="password" id="passwordConfirm" required>
+
+        <div class="help-text">
+            위에서 입력한 비밀번호를 다시 입력해주세요.
+        </div>
+    </div>
+    <div>
+        <label>닉네임</label>
+        <input type="text" id="stdName" name="stdName" required>
+    </div>
+<br>
+    <div>
+        <label>전공</label>
+        <select id="major" name="major" required>
+            <option value="">선택하세요</option>
+            <option value="컴퓨터공학부">컴퓨터공학부</option>
+            <option value="물리치료학">물리치료학부</option>
+            <option value="첨단IT학부">첨단IT학부</option>
+        </select>
+    </div>
+<br>
+    <div>
+        <label>학번</label>
+        <input type="text"
+               id="stdIDN"
+               name="stdIDN"
+               maxlength="8"
+               pattern="[0-9]{8}"
+               inputmode="numeric"
+               required>
+        <div class="help-text">
+            학번 8자리를 입력해주세요.
+        </div>
+    </div>
+<br>
+    <div>
+        <label>성별</label>
+        <select id="stdGender" name="stdGender" required>
+            <option value="">선택하세요</option>
+            <option value="남성">남성</option>
+            <option value="여성">여성</option>
+        </select>
+    </div>
+<br>
+    <div>
+        <label>생년월일</label>
+        <input type="date" id="stdBirth" name="stdBirth" required>
+    </div>
+<br>
+    <div>
+        <label>관심 콘텐츠</label>
+
+        <h4>학습</h4>
+
+        <label>
+            <input type="checkbox" name="content" value="시험" data-category="학습">
+            시험
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="전공공부" data-category="학습">
+            전공공부
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="프로젝트" data-category="학습">
+            프로젝트
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="자격증" data-category="학습">
+            자격증
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="어학" data-category="학습">
+            어학
+        </label>
+
+
+        <h4>운동</h4>
+
+        <label>
+            <input type="checkbox" name="content" value="헬스" data-category="운동">
+            헬스
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="러닝" data-category="운동">
+            러닝
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="농구" data-category="운동">
+            농구
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="축구" data-category="운동">
+            축구
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="등산" data-category="운동">
+            등산
+        </label>
+
+
+        <h4>동아리</h4>
+
+        <label>
+            <input type="checkbox" name="content" value="전공" data-category="동아리">
+            전공
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="봉사" data-category="동아리">
+            봉사
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="친목" data-category="동아리">
+            친목
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="공연" data-category="동아리">
+            공연
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="학술" data-category="동아리">
+            학술
+        </label>
+
+
+        <h4>취미</h4>
+
+        <label>
+            <input type="checkbox" name="content" value="게임" data-category="취미">
+            게임
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="영화" data-category="취미">
+            영화
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="카페" data-category="취미">
+            카페
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="공연" data-category="취미">
+            공연
+        </label>
+
+        <h4>기타</h4>
+
+        <label>
+            <input type="checkbox" name="content" value="식사" data-category="기타">
+            식사
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="식사" data-category="기타">
+            카플
+        </label>
+
+        <label>
+            <input type="checkbox" name="content" value="식사" data-category="기타">
+            택시
+        </label>
+
+        <div class="help-text">
+            관심 콘텐츠는 최대 5개까지 선택할 수 있습니다. 선택하지 않아도 됩니다.
+        </div>
+    </div>
+<br>
+    <div>
+        <label>시간표</label>
+
+        <table border="1">
+
+            <tr>
+                <th>교시</th>
+                <th>월</th>
+                <th>화</th>
+                <th>수</th>
+                <th>목</th>
+                <th>금</th>
+            </tr>
+
+            <tr>
+                <th>1교시</th>
+                <td><input type="checkbox" name="timetable" value="월1"></td>
+                <td><input type="checkbox" name="timetable" value="화1"></td>
+                <td><input type="checkbox" name="timetable" value="수1"></td>
+                <td><input type="checkbox" name="timetable" value="목1"></td>
+                <td><input type="checkbox" name="timetable" value="금1"></td>
+            </tr>
+
+            <tr>
+                <th>2교시</th>
+                <td><input type="checkbox" name="timetable" value="월2"></td>
+                <td><input type="checkbox" name="timetable" value="화2"></td>
+                <td><input type="checkbox" name="timetable" value="수2"></td>
+                <td><input type="checkbox" name="timetable" value="목2"></td>
+                <td><input type="checkbox" name="timetable" value="금2"></td>
+            </tr>
+
+            <tr>
+                <th>3교시</th>
+                <td><input type="checkbox" name="timetable" value="월3"></td>
+                <td><input type="checkbox" name="timetable" value="화3"></td>
+                <td><input type="checkbox" name="timetable" value="수3"></td>
+                <td><input type="checkbox" name="timetable" value="목3"></td>
+                <td><input type="checkbox" name="timetable" value="금3"></td>
+            </tr>
+
+            <tr>
+                <th>4교시</th>
+                <td><input type="checkbox" name="timetable" value="월4"></td>
+                <td><input type="checkbox" name="timetable" value="화4"></td>
+                <td><input type="checkbox" name="timetable" value="수4"></td>
+                <td><input type="checkbox" name="timetable" value="목4"></td>
+                <td><input type="checkbox" name="timetable" value="금4"></td>
+            </tr>
+
+            <tr>
+                <th>5교시</th>
+                <td><input type="checkbox" name="timetable" value="월5"></td>
+                <td><input type="checkbox" name="timetable" value="화5"></td>
+                <td><input type="checkbox" name="timetable" value="수5"></td>
+                <td><input type="checkbox" name="timetable" value="목5"></td>
+                <td><input type="checkbox" name="timetable" value="금5"></td>
+            </tr>
+
+            <tr>
+                <th>6교시</th>
+                <td><input type="checkbox" name="timetable" value="월6"></td>
+                <td><input type="checkbox" name="timetable" value="화6"></td>
+                <td><input type="checkbox" name="timetable" value="수6"></td>
+                <td><input type="checkbox" name="timetable" value="목6"></td>
+                <td><input type="checkbox" name="timetable" value="금6"></td>
+            </tr>
+
+            <tr>
+                <th>7교시</th>
+                <td><input type="checkbox" name="timetable" value="월7"></td>
+                <td><input type="checkbox" name="timetable" value="화7"></td>
+                <td><input type="checkbox" name="timetable" value="수7"></td>
+                <td><input type="checkbox" name="timetable" value="목7"></td>
+                <td><input type="checkbox" name="timetable" value="금7"></td>
+            </tr>
+
+            <tr>
+                <th>8교시</th>
+                <td><input type="checkbox" name="timetable" value="월8"></td>
+                <td><input type="checkbox" name="timetable" value="화8"></td>
+                <td><input type="checkbox" name="timetable" value="수8"></td>
+                <td><input type="checkbox" name="timetable" value="목8"></td>
+                <td><input type="checkbox" name="timetable" value="금8"></td>
+            </tr>
+
+            <tr>
+                <th>9교시</th>
+                <td><input type="checkbox" name="timetable" value="월9"></td>
+                <td><input type="checkbox" name="timetable" value="화9"></td>
+                <td><input type="checkbox" name="timetable" value="수9"></td>
+                <td><input type="checkbox" name="timetable" value="목9"></td>
+                <td><input type="checkbox" name="timetable" value="금9"></td>
+            </tr>
+
+        </table>
+
+        <div class="help-text">
+            수업이 있는 시간을 선택해주세요. 선택하지 않아도 됩니다.
+        </div>
+    </div>
+<br>
+    <button type="submit">회원가입</button>
+
+</form>
+<br>
+
+<a th:href="@{/member/login}">
+    계정이 있어요. 로그인 화면으로 돌아가기(클릭)
+</a>
+<script>
+    let usernameChecked = false;// 중복확인 통과 여부
+
+    let checkedUsername = "";// 마지막으로 중복확인을 통과한 아이디
+
+    function checkUserName() { // 아이디 중복확인
+
+        const userName = document.getElementById("userName").value;
+        const result = document.getElementById("usernameResult");
+
+        const usernamePattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;// 아이디 형식 확인
+
+        if (!usernamePattern.test(userName)) {
+            alert("아이디를 영문과 숫자 조합으로 입력해주세요.");
+            usernameChecked = false;
+            result.textContent = "";
+            return;
+        }
+
+        fetch("/member/check-username?userName=" + encodeURIComponent(userName))
+            .then(response => response.json())
+            .then(available => {
+
+                if (available) {
+                    alert("사용할 수 있는 아이디입니다.");
+                    result.textContent = "사용 가능한 아이디입니다.";
+                    result.className = "check-result success";
+                    usernameChecked = true;
+                    checkedUsername = userName;
+                } else {
+
+                    alert("이미 사용 중인 아이디입니다.");
+                    result.textContent = "이미 사용 중인 아이디입니다.";
+                    result.className = "check-result fail";
+                    usernameChecked = false;
+                    checkedUsername = "";
+                }
+            });
+    }
+
+    // 회원 가입 버튼
+    document.getElementById("joinForm").addEventListener("submit", function(event) {
+
+        const userName = document.getElementById("userName").value;
+        const password = document.getElementById("password").value;
+        const passwordConfirm = document.getElementById("passwordConfirm").value;
+
+        // 아이디 중복확인 여부
+        if (!usernameChecked || checkedUsername !== userName) {
+            event.preventDefault();
+            alert("아이디 중복확인을 해주세요.");
+            return;
+        }
+
+        // 아이디 형식
+        const usernamePattern = /^[A-Za-z0-9]+$/;
+
+        if (!usernamePattern.test(userName)) {
+            event.preventDefault();
+            alert("아이디를 영문과 숫자 조합으로 입력해주세요.");
+            return;
+        }
+
+
+        // 비밀번호 형식
+        const passwordPattern =
+            /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/;
+
+        if (!passwordPattern.test(password)) {
+            event.preventDefault();
+            alert("비밀번호를 영문 + 숫자 + 특수문자 조합으로 입력해주세요.");
+            return;
+        }
+
+        // 비밀번호 확인
+        if (password !== passwordConfirm) {
+            event.preventDefault();
+            alert("비밀번호가 일치하지 않습니다. 비밀번호를 다시 확인해주세요.");
+            return;
+        }
+        // 닉네임 확인
+        const stdName = document.getElementById("stdName").value;
+        if (stdName.trim() === "") {
+            event.preventDefault();
+            alert("닉네임을 입력해주세요.");
+            return;
+        }
+
+        // 전공 확인
+        const major = document.getElementById("major").value;
+        if (major === "") {
+            event.preventDefault();
+            alert("전공을 선택해주세요.");
+            return;
+        }
+
+        // 성별 확인
+        const stdGender = document.getElementById("stdGender").value;
+        if (stdGender === "") {
+            event.preventDefault();
+            alert("성별을 선택해주세요.");
+            return;
+        }
+
+        // 학번 확인
+        const stdIDN = document.getElementById("stdIDN").value;
+
+        if (!/^[0-9]{8}$/.test(stdIDN)) {
+            event.preventDefault();
+            alert("학번은 8자리 숫자로 입력해주세요.");
+            return;
+        }
+
+        // 생년월일 확인
+        const stdBirth = document.getElementById("stdBirth").value;
+        if (stdBirth === "") {
+            event.preventDefault();
+            alert("생년월일을 선택해주세요.");
+            return;
+        }
+        // 선택한 관심 콘텐츠를 String으로 변환
+        const selectedContent =
+            [...document.querySelectorAll('input[name="content"]:checked')]
+                .map(checkbox => checkbox.value);
+
+        // 선택한 관심 콘텐츠의 주요 카테고리 추출
+        const selectedCategories =
+            [...document.querySelectorAll('input[name="content"]:checked')]
+                .map(checkbox => checkbox.dataset.category);
+        // 중복 카테고리 제거
+        const uniqueCategories = [...new Set(selectedCategories)];
+
+        document.getElementById("stdCon").value =
+            selectedContent.join(",");
+
+        document.getElementById("stdCategory").value =
+            uniqueCategories.join(",");
+
+        // 선택한 시간표를 String으로 변환
+        const selectedTime =
+            [...document.querySelectorAll('input[name="timetable"]:checked')]
+                .map(checkbox => checkbox.value);
+
+        document.getElementById("stdTime").value = selectedTime.join(",");
+    });
+
+    //콘텐츠 최대 5개 선택
+    const contentCheckboxes = document.querySelectorAll('input[name="content"]');
+
+    contentCheckboxes.forEach(function(checkbox) {
+        checkbox.addEventListener("change", function() {
+
+            const checkedCount =
+                document.querySelectorAll('input[name="content"]:checked').length;
+
+            if (checkedCount > 5) {
+                this.checked = false;
+                alert("관심 콘텐츠는 최대 5개까지 선택할 수 있습니다.");
+            }
+        });
+    });
+    const timetableCheckboxes =
+        document.querySelectorAll('input[name="timetable"]');
+
+    timetableCheckboxes.forEach(function(checkbox) {
+
+        checkbox.addEventListener("change", function() {
+
+            const cell = this.parentElement;
+
+            if (this.checked) {
+                cell.classList.add("timetable-selected");
+            } else {
+                cell.classList.remove("timetable-selected");
+            }
+
+        });
+
+    });
+
+</script>
+</body>
+</html>

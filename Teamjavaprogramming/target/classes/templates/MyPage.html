@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+    <link rel="stylesheet" th:href="@{/myPage.css}">
+</head>
+<body>
+<div class="top-menu">
+    <button class="back-button"
+            onclick="location.href='/main'">
+        ← 메인으로 돌아가기
+    </button>
+</div>
+<div class="page-container">
+
+    <div class="page-title">
+        <h1>마이페이지</h1>
+    </div>
+
+    <div class="profile-card">
+
+        <div class="profile-icon">
+            👤
+        </div>
+
+        <!-- 아이디 -->
+        <div class="info-row">
+            <div class="info-title">아이디</div>
+            <div class="info-value"
+                 th:text="${member.userName}">
+                아이디
+            </div>
+        </div>
+
+        <!-- 비밀번호 -->
+        <div class="info-row">
+            <div class="info-title">비밀번호</div>
+            <div class="info-value">등록됨</div>
+        </div>
+
+        <!-- 닉네임 -->
+        <div class="info-row">
+            <div class="info-title">
+                닉네임
+            </div>
+            <div class="info-value"
+                 th:text="${member.stdName}">
+                닉네임
+            </div>
+        </div>
+
+        <!-- 학교 -->
+        <div class="info-row">
+            <div class="info-title">
+                학교
+            </div>
+            <div class="info-value"
+                 th:text="${member.stdSchool}">
+                학교
+            </div>
+        </div>
+
+        <!-- 학번 -->
+        <div class="info-row">
+            <div class="info-title">학번</div>
+            <div class="info-value"
+                 th:text="${member.stdIDN}">
+                학번
+            </div>
+        </div>
+
+        <!-- 전공 -->
+        <div class="info-row">
+            <div class="info-title">전공</div>
+            <div class="info-value"
+                 th:text="${member.major == '물리치료학' ? '물리치료학부' : member.major}">
+                전공
+            </div>
+        </div>
+
+        <!-- 성별 -->
+        <div class="info-row">
+            <div class="info-title">
+                성별
+            </div>
+
+            <div class="info-value"
+                 th:text="${member.stdGender}">
+                성별
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-title">
+                생년월일
+            </div>
+
+            <div class="info-value"
+                 th:text="${member.stdBirth}">
+                생년월일
+            </div>
+        </div>
+
+        <!-- 관심 콘텐츠 -->
+        <div class="info-row">
+            <div class="info-title">관심 콘텐츠</div>
+            <div class="info-value"
+                 th:if="${member.stdCon != null and !member.stdCon.isEmpty()}"
+                 th:text="${#strings.replace(member.stdCon, ',', ', ')}">
+                관심 콘텐츠
+            </div>
+            <div class="info-value"
+                 th:if="${member.stdCon == null or member.stdCon.isEmpty()}">
+                선택한 관심 콘텐츠가 없습니다.
+            </div>
+        </div>
+
+        <!-- 가입일 -->
+        <div class="info-row">
+            <div class="info-title">
+                가입일
+            </div>
+
+            <div class="info-value"
+                 th:text="${member.createDate}">
+                가입일
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="button-area">
+    <button onclick="location.href='/mypage/edit'">
+        회원정보 수정
+    </button>
+</div>
+</body>
+</html>

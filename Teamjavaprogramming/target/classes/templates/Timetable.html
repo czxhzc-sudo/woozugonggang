@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>시간표</title>
+
+    <link rel="stylesheet" th:href="@{/timetable.css}">
+</head>
+
+<body>
+
+<a class="back-main" th:href="@{/main}">
+    ← 메인으로 돌아가기
+</a>
+<h1>시간표</h1>
+
+<form id="timetableForm"
+      th:action="@{/timetable/save}"
+      method="post">
+
+    <!-- 최종적으로 서버에 전달할 시간표 -->
+    <input type="hidden"
+           id="stdTime"
+           name="stdTime">
+
+    <table class="timetable">
+
+        <tr>
+            <th>교시</th>
+            <th>월</th>
+            <th>화</th>
+            <th>수</th>
+            <th>목</th>
+            <th>금</th>
+        </tr>
+
+        <tr th:each="period : ${#numbers.sequence(1, 9)}">
+
+            <th th:text="${period} + '교시'"></th>
+
+            <td th:each="day : ${ {'월','화','수','목','금'} }">
+
+                <input type="checkbox"
+                       name="timetable"
+                       th:value="${day + period}"
+                       th:checked="${timetableList.?[day_of_week == #vars.day and slot_index == #vars.period].size() > 0}">
+
+            </td>
+
+        </tr>
+
+    </table>
+
+    <div class="help-text">
+        수업이 있는 시간을 선택해주세요.
+    </div>
+
+    <button type="submit">
+        시간표 저장
+    </button>
+
+</form>
+
+<br>
+
+<script>
+
+    // 시간표 저장
+    document.getElementById("timetableForm")
+        .addEventListener("submit", function(event) {
+
+            const selectedTime =
+                [...document.querySelectorAll(
+                    'input[name="timetable"]:checked'
+                )]
+                    .map(checkbox => checkbox.value);
+
+            document.getElementById("stdTime").value =
+                selectedTime.join(",");
+        });
+
+
+    // 체크했을 때 색상 변경
+    const timetableCheckboxes =
+        document.querySelectorAll(
+            'input[name="timetable"]'
+        );
+
+    timetableCheckboxes.forEach(function(checkbox) {
+
+        const cell = checkbox.parentElement;
+
+        // 처음 페이지가 열렸을 때
+        if (checkbox.checked) {
+            cell.classList.add("timetable-selected");
+        }
+
+        // 체크 상태가 변경되었을 때
+        checkbox.addEventListener("change", function() {
+
+            if (this.checked) {
+                cell.classList.add("timetable-selected");
+            } else {
+                cell.classList.remove("timetable-selected");
+            }
+
+        });
+
+    });
+
+</script>
+
+</body>
+</html>

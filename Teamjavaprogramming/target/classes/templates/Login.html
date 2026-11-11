@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+</head>
+<body>
+
+<h1>로그인</h1>
+
+<form th:action="@{/member/login}" method="post">
+
+    <div>
+        <label>아이디</label>
+        <input type="text" name="userName" required>
+    </div>
+
+    <div>
+        <label>비밀번호</label>
+        <input type="password" name="password" required>
+    </div>
+
+    <button type="submit">로그인</button>
+
+</form>
+<br>
+    <a th:href="@{/member/join}">
+        <button type="button">회원가입</button>
+    </a>
+<script th:if="${loginError != null}">
+    alert("[[${loginError}]]");
+</script>
+</body>
+
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>내 모임</title>
+    <link rel="stylesheet" th:href="@{/MyGroup.css}">
+</head>
+
+<body>
+
+<div class="chat-container"
+     th:attr="data-username=${session.userName}">
+
+    <!-- 왼쪽 : 내 모임 목록 -->
+    <div class="group-sidebar">
+
+        <div class="sidebar-header">
+            <h2>내 모임</h2>
+        </div>
+
+        <div class="group-list">
+
+            <div class="group-card"
+                 th:each="group : ${myGroups}"
+                 th:attr="data-room-id=${group.id}"
+                 onclick="selectRoom(this)">
+                <div class="group-name-row">
+                    <div class="group-name"
+                        th:text="${group.roomName}">
+                        모임 이름
+                    </div>
+                    <!-- 안 읽은 메시지 숫자 -->
+                    <span class="unread-badge"
+                          th:if="${unreadCounts[group.id] != null and unreadCounts[group.id] > 0}"
+                          th:text="${unreadCounts[group.id] > 99 ? '99+' : unreadCounts[group.id]}">
+</span>
+                </div>
+                <div class="group-date"
+                     th:text="${#temporals.format(group.createdAt, 'yyyy-MM-dd HH:mm')}">
+                    생성 시간
+                </div>
+
+            </div>
+
+            <div class="empty"
+                 th:if="${myGroups.isEmpty()}">
+                아직 가입한 모임이 없습니다.
+            </div>
+
+        </div>
+
+        <button class="back-button"
+                onclick="location.href='/main'">
+            메인으로 돌아가기
+        </button>
+
+    </div>
+
+
+    <!-- 오른쪽 : 채팅방 -->
+    <div class="chat-area">
+
+        <div class="chat-header">
+            <h2 id="chat-room-name">
+                모임을 선택해주세요
+            </h2>
+            <!-- 설정 버튼 -->
+            <div class="chat-settings">
+                <button id="settings-button"
+                        type="button"
+                        onclick="toggleSettings()"
+                        disabled>
+                    ⚙ 설정
+                </button>
+                <!-- 설정 메뉴 -->
+                <div id="settings-menu" hidden>
+                    <button type="button"
+                            class="leave-button"
+                            onclick="leaveChatRoom()">
+                        채팅방 탈퇴
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+
+            <div class="welcome-message">
+                왼쪽에서 모임을 선택하면<br>
+                채팅방이 나타납니다.
+            </div>
+
+        </div>
+
+        <div class="chat-input-area">
+
+            <input type="text"
+                   id="message-input"
+                   placeholder="메시지를 입력하세요."
+                   disabled>
+
+            <button id="send-button"
+                    disabled>
+                전송
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    // 현재 선택한 채팅방 ID
+    let currentRoomId = null;
+    let messageTimer = null;
+
+    // 현재 로그인한 사용자 이름
+    const username =
+        document.querySelector(".chat-container")
+            .dataset.username;
+
+
+    // 채팅방 선택
+    function selectRoom(element) {
+
+        // 선택한 방의 ID 가져오기
+        currentRoomId =
+            element.getAttribute("data-room-id");
+
+        // 선택한 방의 이름 가져오기
+        const roomName =
+            element.querySelector(".group-name").textContent;
+
+        // 방 이름을 오른쪽 상단에 표시
+        document.getElementById("chat-room-name")
+            .textContent = roomName;
+
+        // 메시지 입력창 활성화
+        document.getElementById("message-input")
+            .disabled = false;
+
+        // 전송 버튼 활성화
+        document.getElementById("send-button")
+            .disabled = false;
+        document.getElementById("settings-button")
+            .disabled = false;
+        document.getElementById("settings-menu").hidden = true;
+        // 선택된 모임 표시
+        document.querySelectorAll(".group-card")
+            .forEach(card => {
+                card.classList.remove("selected");
+            });
+
+        element.classList.add("selected");
+
+        // 해당 채팅방의 메시지 가져오기
+        loadMessages(currentRoomId);
+        startMessageRefresh();
+    }
+    // 설정 메뉴 열기 / 닫기
+    function toggleSettings() {
+        const menu = document.getElementById("settings-menu");
+        menu.hidden = !menu.hidden;
+    }
+    function startMessageRefresh() {
+
+        // 기존 타이머가 있다면 제거
+        if (messageTimer !== null) {
+            clearInterval(messageTimer);
+        }
+
+        // 3초마다 메시지 확인
+        messageTimer = setInterval(function () {
+            if (currentRoomId !== null) {
+                loadMessages(currentRoomId);
+            }
+        }, 3000);
+    }
+    // 채팅방 메시지 가져오기
+    function loadMessages(roomId) {
+        fetch("/chat/" + roomId + "/messages")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("메시지를 불러올 수 없습니다.");
+                }
+                return response.json();
+            })
+            .then(messages => {
+                // 다른 채팅방을 선택했다면 이전 요청 결과 무시
+                if (String(currentRoomId) !== String(roomId)) {
+                    return;
+                }
+                const chatMessages =
+                    document.getElementById("chat-messages");
+                chatMessages.innerHTML = "";
+                messages.forEach(message => {
+                    const messageDiv = document.createElement("div");
+                    messageDiv.classList.add("message");
+                    if (message.username === username) {
+                        messageDiv.classList.add("my-message");
+                    } else {
+                        messageDiv.classList.add("other-message");
+                    }
+                    const nameDiv = document.createElement("div");
+                    nameDiv.classList.add("message-name");
+                    nameDiv.textContent = message.senderName;
+                    const textDiv = document.createElement("div");
+                    textDiv.classList.add("message-text");
+                    textDiv.textContent = message.message;
+                    messageDiv.appendChild(nameDiv);
+                    messageDiv.appendChild(textDiv);
+                    chatMessages.appendChild(messageDiv);
+                });
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            })
+            .catch(error => {
+                console.error("메시지 불러오기 실패:", error);
+            });
+    }
+    // 메시지 보내기
+    function sendMessage() {
+
+        if (currentRoomId === null) {
+            return;
+        }
+
+        const input = document.getElementById("message-input");
+        const message = input.value.trim();
+
+        if (message === "") {
+            return;
+        }
+
+        const roomId = currentRoomId;
+
+        const params = new URLSearchParams();
+        params.append("message", message);
+
+        fetch("/chat/" + roomId + "/messages", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+
+            body: params
+
+        })
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error("메시지 전송에 실패했습니다.");
+                }
+
+                return response.json();
+            })
+            .then(savedMessage => {
+
+                input.value = "";
+
+                if (String(currentRoomId) === String(roomId)) {
+                    loadMessages(roomId);
+                }
+
+            })
+            .catch(error => {
+                console.error("메시지 전송 실패:", error);
+                alert(error.message);
+            });
+    }
+    // 채팅방 탈퇴
+    function leaveChatRoom() {
+
+        if (currentRoomId === null) {
+            return;
+        }
+
+        // 탈퇴 확인
+        const confirmLeave = confirm(
+            "정말 이 채팅방에서 탈퇴하시겠습니까?\n기존 채팅 메시지는 삭제되지 않습니다."
+        );
+
+        if (!confirmLeave) {
+            return;
+        }
+
+        const roomId = currentRoomId;
+
+        fetch("/my-group/" + roomId + "/leave", {
+            method: "POST"
+        })
+            .then(async response => {
+
+                const result = await response.text();
+
+                if (!response.ok) {
+                    throw new Error(result || "탈퇴에 실패했습니다.");
+                }
+
+                return result;
+            })
+            .then(result => {
+
+                // 메시지 자동 새로고침 중지
+                if (messageTimer !== null) {
+                    clearInterval(messageTimer);
+                    messageTimer = null;
+                }
+
+                // 왼쪽 모임 목록에서 해당 방 제거
+                const selectedCard = document.querySelector(
+                    '.group-card[data-room-id="' + roomId + '"]'
+                );
+
+                if (selectedCard) {
+                    selectedCard.remove();
+                }
+
+                // 현재 채팅방 초기화
+                currentRoomId = null;
+
+                document.getElementById("chat-room-name").textContent =
+                    "모임을 선택해주세요";
+
+                document.getElementById("chat-messages").innerHTML =
+                    '<div class="welcome-message">왼쪽에서 모임을 선택하면<br>채팅방이 나타납니다.</div>';
+
+                document.getElementById("message-input").value = "";
+                document.getElementById("message-input").disabled = true;
+
+                document.getElementById("send-button").disabled = true;
+                document.getElementById("settings-button").disabled = true;
+
+                document.getElementById("settings-menu").hidden = true;
+
+                // 모임이 하나도 남지 않은 경우
+                if (document.querySelectorAll(".group-card").length === 0) {
+
+                    const emptyMessage = document.createElement("div");
+                    emptyMessage.classList.add("empty");
+                    emptyMessage.textContent = "아직 가입한 모임이 없습니다.";
+
+                    document.querySelector(".group-list")
+                        .appendChild(emptyMessage);
+                }
+
+                alert("채팅방에서 탈퇴했습니다.");
+
+            })
+            .catch(error => {
+
+                console.error("채팅방 탈퇴 실패:", error);
+                alert(error.message);
+
+            });
+    }
+
+    // 전송 버튼 클릭
+    document.getElementById("send-button")
+        .addEventListener("click", sendMessage);
+
+    // Enter 키로 메시지 보내기
+    document.getElementById("message-input")
+        .addEventListener("keydown", function(event) {
+
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+
+        });
+
+</script>
+
+</body>
+</html>

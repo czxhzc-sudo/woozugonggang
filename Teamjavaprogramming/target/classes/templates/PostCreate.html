@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 작성</title>
+    <link rel="stylesheet" th:href="@{/post.css}">
+</head>
+<body>
+
+<h1>게시글 작성</h1>
+
+<form action="/post/create" method="post">
+
+    <div>
+        <label>제목</label>
+        <input type="text" name="title">
+    </div>
+
+    <div>
+        <label>내용</label>
+        <textarea name="content"></textarea>
+    </div>
+
+    <div>
+        <label>카테고리</label>
+        <select name="category" id="category">
+            <option value="운동">운동</option>
+            <option value="학습">학습</option>
+            <option value="취미">취미</option>
+            <option value="동아리">동아리</option>
+            <option value="기타">기타</option>
+        </select>
+    </div>
+
+    <!-- 운동 콘텐츠 -->
+    <div id="exerciseTags" class="hashtag-group">
+        <strong>운동 콘텐츠</strong><br>
+        <label>
+            <input type="checkbox" name="hashtags" value="헬스">
+            헬스
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="러닝">
+            러닝
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="농구">
+            농구
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="축구">
+            축구
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="등산">
+            등산
+        </label>
+    </div>
+
+    <!-- 학습 콘텐츠 -->
+    <div id="studyTags" class="hashtag-group">
+        <strong>학습 콘텐츠</strong><br>
+        <label>
+            <input type="checkbox" name="hashtags" value="시험">
+            시험
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="전공공부">
+            전공공부
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="프로젝트">
+            프로젝트
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="자격증">
+            자격증
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="어학">
+            어학
+        </label>
+    </div>
+    <!-- 취미 콘텐츠 -->
+    <div id="hobbyTags" class="hashtag-group">
+        <strong>취미 콘텐츠</strong><br>
+        <label>
+            <input type="checkbox" name="hashtags" value="게임">
+            게임
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="영화">
+            영화
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="산책">
+            산책
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="카페">
+            카페
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="공연">
+            공연
+        </label>
+    </div>
+
+    <!-- 동아리 콘텐츠 -->
+    <div id="clubTags" class="hashtag-group">
+        <strong>동아리 콘텐츠</strong><br>
+        <label>
+            <input type="checkbox" name="hashtags" value="전공">
+            전공
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="봉사">
+            봉사
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="친목">
+            친목
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="공연">
+            공연
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="학술">
+            학술
+        </label>
+    </div>
+    <!-- 학습 콘텐츠 -->
+    <div id="exTags" class="hashtag-group">
+        <strong>기타 콘텐츠</strong><br>
+        <label>
+            <input type="checkbox" name="hashtags" value="택시">
+            택시
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="카플">
+            카플
+        </label>
+        <label>
+            <input type="checkbox" name="hashtags" value="식사">
+            식사
+        </label>
+    </div>
+    <!--전공설정-->
+    <div id="recruitMajorArea" style="display: none;">
+        <label>모집 전공</label>
+
+        <select name="recruitMajor" id="recruitMajor">
+            <option value="무관">무관</option>
+            <option value="컴퓨터공학부">
+                컴퓨터공학부
+            </option>
+
+            <option value="물리치료학부">
+                물리치료학부
+            </option>
+
+            <option value="첨단IT학부">
+                첨단IT학부
+            </option>
+        </select>
+    </div>
+    <div>
+        <label>모임 요일</label>
+        <select name="meetingDay">
+            <option value="월요일">월요일</option>
+            <option value="화요일">화요일</option>
+            <option value="수요일">수요일</option>
+            <option value="목요일">목요일</option>
+            <option value="금요일">금요일</option>
+        </select>
+    </div>
+
+    <div>
+        <label>시작 시간</label>
+        <select name="startTime" id="startTime">
+            <option value="">시작 시간을 선택해주세요</option>
+            <option value="08:00">오전 8:00</option>
+            <option value="09:00">오전 9:00</option>
+            <option value="10:00">오전 10:00</option>
+            <option value="11:00">오전 11:00</option>
+            <option value="12:00">오후 12:00</option>
+            <option value="13:00">오후 1:00</option>
+            <option value="14:00">오후 2:00</option>
+            <option value="15:00">오후 3:00</option>
+            <option value="16:00">오후 4:00</option>
+            <option value="17:00">오후 5:00</option>
+            <option value="18:00">오후 6:00</option>
+            <option value="19:00">오후 7:00</option>
+        </select>
+    </div>
+
+    <div>
+        <label>종료 시간</label>
+        <select name="endTime" id="endTime" disabled>
+            <option value="">시작 시간을 먼저 선택해주세요</option> </select>
+    </div>
+    <!--학번설정-->
+    <div class="form-group">
+        <label>모집 학번</label>
+
+        <select id="studentIdType">
+            <option value="무관">무관</option>
+            <option value="범위">학번 범위 설정</option>
+        </select>
+    </div>
+
+    <div id="studentIdRange" style="display: none;">
+
+        <div class="form-group">
+            <label>시작 학번</label>
+
+            <input type="number"
+                   id="recruitStartYear"
+                   name="recruitStartYear"
+                   min="2018"
+                   max="2099"
+                   placeholder="예: 2022">
+        </div>
+
+        <div class="form-group">
+            <label>끝 학번</label>
+
+            <input type="number"
+                   id="recruitEndYear"
+                   name="recruitEndYear"
+                   min="2018"
+                   max="2099"
+                   placeholder="예: 2025">
+        </div>
+
+    </div>
+    <div>
+        <label>모집 대상</label>
+
+        <select name="recruitType" id="recruitType">
+            <option value="무관">무관</option>
+            <option value="성별별">남녀별 모집</option>
+        </select>
+    </div>
+    <!-- 무관 -->
+    <div id="normalRecruit">
+
+        <label>전체 모집 인원</label>
+
+        <input
+                type="number"
+                id="maxMembers"
+                name="maxMembers"
+                min="1"
+                value="1">
+    </div>
+    <!-- 남녀별 -->
+    <div id="genderRecruit" class="gender-setting">
+        <div>
+            <label>남자 모집 인원</label>
+            <input
+                    type="number"
+                    id="maleMaxMembers"
+                    name="maleMaxMembers"
+                    min="0"
+                    value="0">
+        </div>
+        <div>
+            <label>여자 모집 인원</label>
+
+            <input
+                    type="number"
+                    id="femaleMaxMembers"
+                    name="femaleMaxMembers"
+                    min="0"
+                    value="0">
+        </div>
+
+    </div>
+
+    <div>
+        <label>가입 방법</label>
+        <select name="joinType">
+            <option value="공개">공개</option>
+            <option value="심사">심사</option>
+        </select>
+    </div>
+
+    <button type="submit">게시글 등록</button>
+
+</form>
+<script th:inline="javascript">
+    const memberGender = /*[[${gender}]]*/ "";
+    //카테고리 → 콘텐츠
+    const category = document.getElementById("category");
+    const exerciseTags = document.getElementById("exerciseTags");
+    const studyTags = document.getElementById("studyTags");
+    const hobbyTags = document.getElementById("hobbyTags");
+    const clubTags = document.getElementById("clubTags");
+    const exTags = document.getElementById("exTags");
+    const recruitMajorArea =
+        document.getElementById("recruitMajorArea");
+
+    const recruitMajor =
+        document.getElementById("recruitMajor");
+    function updateCategory() {
+        // 모든 콘텐츠 숨기기
+        exerciseTags.style.display = "none";
+        studyTags.style.display = "none";
+        hobbyTags.style.display = "none";
+        clubTags.style.display = "none";
+        exTags.style.display = "none";
+        // 학습이 아니면 모집 전공 숨기기
+        recruitMajorArea.style.display = "none";
+        // 선택한 카테고리만 보여주기
+        if (category.value === "운동") {
+            exerciseTags.style.display = "block";
+        }
+
+        else if (category.value === "학습") {
+            studyTags.style.display = "block";
+            recruitMajorArea.style.display = "block";// 학습일 때만 모집 전공 표시
+        }
+
+        else if (category.value === "취미") {
+            hobbyTags.style.display = "block";
+        }
+
+        else if (category.value === "동아리") {
+            clubTags.style.display = "block";
+        }
+        else if (category.value === "기타") {
+            exTags.style.display = "block";
+        }
+        // 학습이 아닐 때는 모집 전공을 무관으로 초기화
+        if (category.value !== "학습") {
+            recruitMajor.value = "무관";
+        }
+    }
+    // 카테고리를 변경할 때 실행
+    category.addEventListener("change", updateCategory);
+    // 페이지 처음 열었을 때 실행
+    updateCategory();
+    //학번 설정
+    const studentIdType =
+        document.getElementById("studentIdType");
+
+    const studentIdRange =
+        document.getElementById("studentIdRange");
+
+    studentIdType.addEventListener("change", function() {
+
+        if (this.value === "범위") {
+            studentIdRange.style.display = "block";
+        } else {
+            studentIdRange.style.display = "none";
+
+            document.getElementById("recruitStartYear").value = "";
+            document.getElementById("recruitEndYear").value = "";
+        }
+
+    });
+    //시작 시간 → 종료 시간
+    const startTime = document.getElementById("startTime");
+    const endTime = document.getElementById("endTime");
+    startTime.addEventListener("change", function (){
+        if (startTime.value === "") {
+            endTime.innerHTML =
+                '<option value="">시작 시간을 먼저 선택해주세요</option>';
+            endTime.disabled = true;
+            return;
+        }
+        // 기존 종료 시간 삭제
+        endTime.innerHTML = "";
+        // 시작 시간 가져오기
+        const startHour = parseInt(startTime.value.split(":")[0]);
+        // 시작 시간부터 오후 7시까지 생성
+        for (let hour = startHour; hour <= 19; hour++) {
+            const value = String(hour).padStart(2, "0") + ":00";
+            let text;
+            if (hour < 12) {
+                text = "오전 " + hour + ":00";
+            }
+            else {
+                text = "오후 " + (hour - 12) + ":00";
+            }
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = text;
+            endTime.appendChild(option);
+        }
+        // 종료 시간 활성화
+        endTime.disabled = false;
+    });
+    // 페이지 처음 열었을 때
+
+
+    //모집 대상
+    const recruitType = document.getElementById("recruitType");
+
+    const normalRecruit = document.getElementById("normalRecruit");
+    const genderRecruit = document.getElementById("genderRecruit");
+    const maxMembers = document.getElementById("maxMembers");
+    const maleMaxMembers = document.getElementById("maleMaxMembers");
+    const femaleMaxMembers = document.getElementById("femaleMaxMembers");
+    recruitType.addEventListener("change", function () {
+        if (recruitType.value === "무관") {
+            normalRecruit.style.display = "block";
+            genderRecruit.style.display = "none";
+
+        } else {
+            normalRecruit.style.display = "none";
+            genderRecruit.style.display = "block";
+            // 작성자의 성별 모집 인원은 최소 1명
+            if (memberGender === "남성") {
+                if (parseInt(maleMaxMembers.value) < 1) {
+                    maleMaxMembers.value = 1;
+                }
+
+            } else if (memberGender === "여성") {
+                if (parseInt(femaleMaxMembers.value) < 1) {
+                    femaleMaxMembers.value = 1;
+                }
+            }
+            updateTotalMembers();
+        }
+    });
+    //남자 + 여자 = 전체 모집 인원
+    function updateTotalMembers() {
+        const male = parseInt(maleMaxMembers.value) || 0;
+        const female = parseInt(femaleMaxMembers.value) || 0;
+        maxMembers.value = male + female;
+    }
+    maleMaxMembers.addEventListener( "input", updateTotalMembers );
+    femaleMaxMembers.addEventListener( "input", updateTotalMembers );
+</script>
+</body>
+</html>

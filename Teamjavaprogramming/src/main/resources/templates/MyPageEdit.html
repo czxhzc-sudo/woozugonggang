@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>회원정보 수정</title>
+    <link rel="stylesheet" th:href="@{/myPageEdit.css}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>회원정보 수정</h1>
+
+    <div class="edit-card">
+        <form id="editForm" th:action="@{/mypage/edit}" method="post">
+            <!-- 오류 메시지 -->
+            <p th:if="${errorMessage}"
+               th:text="${errorMessage}"
+               style="color: red;">
+            </p>
+            <!-- 아이디 -->
+            <div class="info-row">
+                <label class="info-title">
+                    아이디
+                </label>
+                <input type="text"
+                       th:value="${member.userName}"
+                       disabled>
+            </div>
+            <!-- 비밀번호 -->
+            <div class="info-row">
+                <label class="info-title" for="password">새 비밀번호</label>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       placeholder="변경하지 않으려면 비워두세요.">
+                <div class="help-text">
+                    변경 시 영문 + 숫자 + 특수문자 조합으로 입력해주세요.
+                </div>
+            </div>
+            <!-- 비밀번호 확인 -->
+            <div class="info-row">
+                <label class="info-title" for="passwordConfirm">
+                    새 비밀번호 확인
+                </label>
+                <input type="password"
+                       id="passwordConfirm"
+                       name="passwordConfirm"
+                       placeholder="새 비밀번호를 다시 입력해주세요.">
+            </div>
+
+            <!-- 닉네임 -->
+            <div class="info-row">
+                <label class="info-title"
+                       for="stdName">
+                    닉네임
+                </label>
+                <input type="text"
+                       id="stdName"
+                       name="stdName"
+                       th:value="${member.stdName}"
+                       required>
+            </div>
+            <!-- 학교 -->
+            <div class="info-row">
+                <label class="info-title">
+                    학교
+                </label>
+                <input type="text"
+                       th:value="${member.stdSchool}"
+                       disabled>
+            </div>
+            <!-- 전공 -->
+            <div class="info-row">
+                <label class="info-title" for="major">전공</label>
+
+                <select id="major" name="major" required>
+                    <option value="">선택하세요</option>
+                    <option value="컴퓨터공학부"
+                            th:selected="${member.major == '컴퓨터공학부'}">
+                        컴퓨터공학부
+                    </option>
+                    <option value="물리치료학"
+                            th:selected="${member.major == '물리치료학'}">
+                        물리치료학부
+                    </option>
+                    <option value="첨단IT학부"
+                            th:selected="${member.major == '첨단IT학부'}">
+                        첨단IT학부
+                    </option>
+                </select>
+            </div>
+            <!-- 성별 -->
+            <div class="info-row">
+                <label class="info-title"
+                       for="stdGender">
+                    성별
+                </label>
+                <select id="stdGender"
+                        name="stdGender"
+                        required>
+                    <option value="남성"
+                            th:selected="${member.stdGender == '남성'}">
+                        남성
+                    </option>
+                    <option value="여성"
+                            th:selected="${member.stdGender == '여성'}">
+                        여성
+                    </option>
+                </select>
+            </div>
+
+            <!-- 생년월일 -->
+            <div class="info-row">
+                <label class="info-title"
+                       for="stdBirth">
+                    생년월일
+                </label>
+
+                <input type="date"
+                       id="stdBirth"
+                       name="stdBirth"
+                       th:value="${member.stdBirth}"
+                       required>
+            </div>
+            <!-- 관심 콘텐츠 -->
+            <div class="info-row">
+
+                <label class="info-title">관심 콘텐츠</label>
+                <div class="content-group">
+                    <h4>학습</h4>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="시험" data-category="학습"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',시험,')}">
+                        시험
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="전공공부" data-category="학습"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',전공공부,')}">
+                        전공공부
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="프로젝트" data-category="학습"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',프로젝트,')}">
+                        프로젝트
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="자격증" data-category="학습"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',자격증,')}">
+                        자격증
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="어학" data-category="학습"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',어학,')}">
+                        어학
+                    </label>
+                </div>
+                <div class="content-group">
+                    <h4>운동</h4>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="헬스" data-category="운동"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',헬스,')}">
+                        헬스
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="러닝" data-category="운동"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',러닝,')}">
+                        러닝
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="농구" data-category="운동"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',농구,')}">
+                        농구
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="축구" data-category="운동"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',축구,')}">
+                        축구
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="등산" data-category="운동"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',등산,')}">
+                        등산
+                    </label>
+                </div>
+
+                <div class="content-group">
+                    <h4>동아리</h4>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="전공" data-category="동아리"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',전공,')}">
+                        전공
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="봉사" data-category="동아리"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',봉사,')}">
+                        봉사
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="친목" data-category="동아리"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',친목,')}">
+                        친목
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="공연" data-category="동아리"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',공연,')}">
+                        공연
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="학술" data-category="동아리"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',학술,')}">
+                        학술
+                    </label>
+                </div>
+
+                <div class="content-group">
+                    <h4>취미</h4>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="게임" data-category="취미"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',게임,')}">
+                        게임
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="영화" data-category="취미"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',영화,')}">
+                        영화
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="식사" data-category="취미"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',식사,')}">
+                        식사
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="카페" data-category="취미"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',카페,')}">
+                        카페
+                    </label>
+                    <label class="content-option">
+                        <input type="checkbox" name="content"
+                               value="공연" data-category="취미"
+                               th:checked="${#strings.contains(',' + (member.stdCon ?: '') + ',', ',공연,')}">
+                        공연
+                    </label>
+                </div>
+
+                <div class="help-text">
+                    관심 콘텐츠는 최대 5개까지 선택할 수 있습니다.
+                </div>
+
+            </div>
+
+            <!-- 버튼 -->
+            <div class="button-area">
+                <button type="button"
+                        onclick="location.href='/mypage'">
+                    취소
+                </button>
+
+                <button type="submit">
+                    저장
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+<script>
+    const editForm = document.getElementById("editForm");
+
+    // 관심 콘텐츠 최대 5개 선택
+    const contentCheckboxes =
+        document.querySelectorAll('input[name="content"]');
+
+    contentCheckboxes.forEach(function(checkbox) {
+        checkbox.addEventListener("change", function() {
+            const checkedCount =
+                document.querySelectorAll('input[name="content"]:checked').length;
+
+            if (checkedCount > 5) {
+                this.checked = false;
+                alert("관심 콘텐츠는 최대 5개까지 선택할 수 있습니다.");
+            }
+        });
+    });
+
+    // 수정 내용 전송 전 검사 및 hidden 값 생성
+    editForm.addEventListener("submit", function(event) {
+
+        const password = document.getElementById("password").value;
+        const passwordConfirm =
+            document.getElementById("passwordConfirm").value;
+        // 비밀번호를 입력한 경우에만 형식 및 확인 검사
+        if (password !== "") {
+            const passwordPattern =
+                /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/;
+
+            if (!passwordPattern.test(password)) {
+                event.preventDefault();
+                alert("비밀번호를 영문 + 숫자 + 특수문자 조합으로 입력해주세요.");
+                return;
+            }
+
+            if (password !== passwordConfirm) {
+                event.preventDefault();
+                alert("비밀번호가 일치하지 않습니다.");
+                return;
+            }
+        } else if (passwordConfirm !== "") {
+            event.preventDefault();
+            alert("새 비밀번호를 입력해주세요.");
+            return;
+        }
+
+        // 관심 콘텐츠 저장값 생성
+        const selectedContents =
+            [...document.querySelectorAll('input[name="content"]:checked')];
+
+        const selectedContent =
+            selectedContents.map(checkbox => checkbox.value);
+
+        const selectedCategories =
+            [...new Set(selectedContents.map(
+                checkbox => checkbox.dataset.category
+            ))];
+
+        // hidden input 생성
+        let stdConInput = document.getElementById("stdCon");
+        let stdCategoryInput = document.getElementById("stdCategory");
+
+        if (!stdConInput) {
+            stdConInput = document.createElement("input");
+            stdConInput.type = "hidden";
+            stdConInput.name = "stdCon";
+            stdConInput.id = "stdCon";
+            editForm.appendChild(stdConInput);
+        }
+
+        if (!stdCategoryInput) {
+            stdCategoryInput = document.createElement("input");
+            stdCategoryInput.type = "hidden";
+            stdCategoryInput.name = "stdCategory";
+            stdCategoryInput.id = "stdCategory";
+            editForm.appendChild(stdCategoryInput);
+        }
+        stdConInput.value = selectedContent.join(",");
+        stdCategoryInput.value = selectedCategories.join(",");
+    });
+</script>
+</body>
+</html>

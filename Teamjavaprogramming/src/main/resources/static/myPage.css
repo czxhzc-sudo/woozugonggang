@@ -1,0 +1,142 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* 상단 메뉴 */
+.top-menu {
+    height: 65px;
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 30px;
+}
+
+.back-button {
+    padding: 10px 18px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.back-button:hover {
+    background-color: #eeeeee;
+}
+
+/* 페이지 영역 */
+.page-container {
+    width: 600px;
+    max-width: calc(100% - 40px);
+    margin: 50px auto 25px;
+}
+
+.page-title {
+    margin-bottom: 25px;
+}
+
+.page-title h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+/* 프로필 카드 */
+.profile-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+}
+
+.profile-icon {
+    text-align: center;
+    font-size: 60px;
+    margin-bottom: 20px;
+}
+
+/* 회원정보 항목 */
+.info-row {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 0;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-title {
+    width: 130px;
+    flex-shrink: 0;
+    font-weight: bold;
+    color: #555555;
+}
+
+.info-value {
+    flex: 1;
+    min-width: 0;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* 관심 콘텐츠 */
+.info-row:has(.info-value) {
+    line-height: 1.5;
+}
+
+/* 버튼 영역 */
+.button-area {
+    width: 600px;
+    max-width: calc(100% - 40px);
+    margin: 0 auto 50px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.button-area button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    background-color: #333;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.button-area button:hover {
+    background-color: #555;
+}
+
+/* 작은 화면 */
+@media (max-width: 600px) {
+    .top-menu {
+        padding: 0 15px;
+    }
+
+    .page-container {
+        margin-top: 30px;
+    }
+
+    .profile-card {
+        padding: 20px;
+    }
+
+    .info-title {
+        width: 100px;
+    }
+}
