@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>로그인 · 우주공강</title>
+    <link rel="stylesheet" th:href="@{/auth-theme.css}">
+</head>
+<body class="auth-page">
+<main class="auth-card">
+<a class="auth-brand" th:href="@{/}"><span>✦</span> 우주공강</a>
+<p class="auth-eyebrow">우리의 공강이 만나는 곳</p>
+
+<h1>로그인</h1>
+<p class="auth-description">다시 만나 반가워요. 함께할 공강을 찾아볼까요?</p>
+
+<form th:action="@{/member/login}" method="post">
+
+    <div>
+        <label for="loginUserName">아이디</label>
+        <input id="loginUserName" type="text" name="userName" autocomplete="username" placeholder="아이디를 입력하세요" required>
+    </div>
+
+    <div>
+        <label for="loginPassword">비밀번호</label>
+        <input id="loginPassword" type="password" name="password" autocomplete="current-password" placeholder="비밀번호를 입력하세요" required>
+    </div>
+
+    <button type="submit">로그인</button>
+
+</form>
+<p class="auth-footer">아직 계정이 없으신가요? <a th:href="@{/member/join}">회원가입</a></p>
+</main>
+<script th:if="${loginError != null}">
+    alert("[[${loginError}]]");
+</script>
+</body>
+
+</html>

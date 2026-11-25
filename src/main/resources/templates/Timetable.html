@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>시간표</title>
+
+    <link rel="stylesheet" th:href="@{/Timetable.css}">
+    <link rel="stylesheet" th:href="@{/vercel-theme.css}">
+    <link rel="stylesheet" th:href="@{/button-unity.css}">
+    <link rel="stylesheet" th:href="@{/timetable-picker.css}">
+    <link rel="stylesheet" th:href="@{/timetable-toggle.css}">
+    <script defer th:src="@{/timetable-drag.js}"></script>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/AppNav :: navigation('timetable')}"></div>
+
+<div class="page-action-row">
+    <a class="back-main" th:href="@{/main}">← 메인으로 돌아가기</a>
+</div>
+<main class="timetable-page">
+<section class="timetable-heading">
+    <div>
+        <p class="eyebrow">MY TIMETABLE</p>
+        <h1>시간표 설정</h1>
+        <p>수업이 있는 시간을 선택하세요. 셀을 누른 채 드래그하면 여러 시간을 한 번에 설정할 수 있어요.</p>
+    </div>
+</section>
+
+<form id="timetableForm"
+      th:action="@{/timetable/save}"
+      method="post">
+
+    <!-- 최종적으로 서버에 전달할 시간표 -->
+    <input type="hidden"
+           id="stdTime"
+           name="stdTime">
+
+    <div class="timetable-mode-bar">
+        <div>
+            <strong>시간표 표시 기준</strong>
+            <span data-mode-description>수업이 있는 시간이 보라색으로 표시됩니다. 셀을 누르거나 드래그해 선택하세요.</span>
+        </div>
+        <button class="mode-toggle" type="button" data-timetable-mode-toggle aria-pressed="false">
+            <span class="mode-toggle-track" aria-hidden="true"><i></i></span>
+            <span data-mode-label>수업시간 보기</span>
+        </button>
+    </div>
+
+    <div class="timetable-wrap">
+    <table class="timetable timetable-picker">
+
+        <tr>
+            <th>교시</th>
+            <th>월</th>
+            <th>화</th>
+            <th>수</th>
+            <th>목</th>
+            <th>금</th>
+        </tr>
+
+        <tr th:each="period : ${#numbers.sequence(1, 9)}">
+
+            <th th:text="${period} + '교시'"></th>
+
+            <td th:each="day : ${ {'월','화','수','목','금'} }">
+
+                <input type="checkbox"
+                       name="timetable"
+                       th:value="${day + period}"
+                       th:checked="${timetableList.?[day_of_week == #vars.day and slot_index == #vars.period].size() > 0}">
+
+            </td>
+
+        </tr>
+
+    </table>
+    </div>
+
+    <div class="drag-guide">클릭 또는 드래그로 선택하고, 선택된 칸을 다시 드래그하면 해제됩니다.</div>
+
+    <div class="save-row"><button type="submit">시간표 저장</button></div>
+
+</form>
+</main>
+
+<br>
+
+<script>
+
+    // 시간표 저장
+    document.getElementById("timetableForm")
+        .addEventListener("submit", function(event) {
+
+            const selectedTime =
+                [...document.querySelectorAll(
+                    'input[name="timetable"]:checked'
+                )]
+                    .map(checkbox => checkbox.value);
+
+            document.getElementById("stdTime").value =
+                selectedTime.join(",");
+        });
+
+
+    // 체크했을 때 색상 변경
+    const timetableCheckboxes =
+        document.querySelectorAll(
+            'input[name="timetable"]'
+        );
+
+    timetableCheckboxes.forEach(function(checkbox) {
+
+        const cell = checkbox.parentElement;
+
+        // 처음 페이지가 열렸을 때
+        if (checkbox.checked) {
+            cell.classList.add("timetable-selected");
+        }
+
+        // 체크 상태가 변경되었을 때
+        checkbox.addEventListener("change", function() {
+
+            if (this.checked) {
+                cell.classList.add("timetable-selected");
+            } else {
+                cell.classList.remove("timetable-selected");
+            }
+
+        });
+
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1305 @@
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>우주공강</title>
+    <link rel="stylesheet" th:href="@{/main.css}">
+    <link rel="stylesheet" th:href="@{/vercel-theme.css}">
+    <link rel="stylesheet" th:href="@{/button-unity.css}">
+    <link rel="stylesheet" th:href="@{/selection-polish.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/AppNav :: navigation('meetups')}"></div>
+
+<!-- 오늘의 시간표 -->
+<section class="today-timetable">
+
+    <div class="section-title">
+        오늘의 시간표
+    </div>
+
+    <div class="timetable-row" id="todayTimetable">
+        <!-- JavaScript가 현재 요일의 시간표를 만들어 줌 -->
+    </div>
+
+</section>
+
+<!-- 카테고리 -->
+<nav class="category-menu">
+
+    <button type="button" onclick="showRecommendation()">
+        추천
+    </button>
+
+    <button type="button" onclick="showAllPosts()">
+        전체
+    </button>
+
+    <button type="button" onclick="showPosts('학습'); showStudyMenu()">
+        학습
+    </button>
+
+    <button type="button" onclick="showPosts('운동'); showSportsMenu()">
+        운동
+    </button>
+
+    <button type="button" onclick="showPosts('동아리'); showClubMenu()">
+        동아리
+    </button>
+
+    <button type="button" onclick="showPosts('취미'); showHobbyMenu()">
+        취미
+    </button>
+
+    <button type="button" onclick="showPosts('기타'); showExMenu()">
+        기타
+    </button>
+    <!-- 게시글 검색 -->
+    <div class="category-search">
+        <input type="search"
+               id="postSearchInput"
+               placeholder="게시글 검색..."
+               autocomplete="off"
+               aria-label="게시글 검색"
+               oninput="searchPosts(this.value)">
+    </div>
+</nav>
+
+<!-- 추천 하위 메뉴 -->
+<div class="sports-sub-menu" id="recommendMenu">
+
+    <div class="sports-buttons" id="recommendButtons">
+        <!-- JavaScript가 회원의 관심 콘텐츠를 넣어줌 -->
+    </div>
+
+    <button type="button"
+            class="hide-button"
+            onclick="hideRecommendMenu()">
+        숨김
+    </button>
+
+</div>
+
+<!-- 운동 하위 메뉴 -->
+<div class="sports-sub-menu" id="sportsMenu">
+
+    <div class="sports-buttons">
+
+        <button type="button" onclick="showPosts('운동', '헬스')">
+            헬스
+        </button>
+
+        <button type="button" onclick="showPosts('운동', '러닝')">
+            러닝
+        </button>
+
+        <button type="button" onclick="showPosts('운동', '농구')">
+            농구
+        </button>
+
+        <button type="button" onclick="showPosts('운동', '축구')">
+            축구
+        </button>
+
+        <button type="button" onclick="showPosts('운동', '등산')">
+            등산
+        </button>
+        <button type="button" onclick="showPosts('운동', '미확정')">
+            미확정
+        </button>
+    </div>
+
+    <button type="button"
+            class="hide-button"
+            onclick="hideSportsMenu()">
+        숨김
+    </button>
+
+</div>
+
+<!-- 학습 하위 메뉴 -->
+<div class="sports-sub-menu" id="studyMenu">
+
+    <div class="sports-buttons">
+
+        <button type="button" onclick="showPosts('학습', '시험')">
+            시험
+        </button>
+
+        <button type="button" onclick="showPosts('학습', '전공공부')">
+            전공공부
+        </button>
+
+        <button type="button" onclick="showPosts('학습', '프로젝트')">
+            프로젝트
+        </button>
+
+        <button type="button" onclick="showPosts('학습', '자격증')">
+            자격증
+        </button>
+
+        <button type="button" onclick="showPosts('학습', '어학')">
+            어학
+        </button>
+        <button type="button" onclick="showPosts('학습', '미확정')">
+            미확정
+        </button>
+    </div>
+
+    <button type="button"
+            class="hide-button"
+            onclick="hideStudyMenu()">
+        숨김
+    </button>
+
+</div>
+
+<!-- 동아리 하위 메뉴 -->
+<div class="sports-sub-menu" id="clubMenu">
+
+    <div class="sports-buttons">
+
+        <button type="button" onclick="showPosts('동아리', '전공')">
+            전공
+        </button>
+
+        <button type="button" onclick="showPosts('동아리', '봉사')">
+            봉사
+        </button>
+
+        <button type="button" onclick="showPosts('동아리', '친목')">
+            친목
+        </button>
+
+        <button type="button" onclick="showPosts('동아리', '공연')">
+            공연
+        </button>
+
+        <button type="button" onclick="showPosts('동아리', '학술')">
+            학술
+        </button>
+        <button type="button" onclick="showPosts('동아리', '미확정')">
+            미확정
+        </button>
+
+    </div>
+
+    <button type="button"
+            class="hide-button"
+            onclick="hideClubMenu()">
+        숨김
+    </button>
+
+</div>
+
+<!-- 취미 하위 메뉴 -->
+<div class="sports-sub-menu" id="hobbyMenu">
+
+    <div class="sports-buttons">
+
+        <button type="button" onclick="showPosts('취미', '게임')">
+            게임
+        </button>
+
+        <button type="button" onclick="showPosts('취미', '영화')">
+            영화
+        </button>
+
+        <button type="button" onclick="showPosts('취미', '산책')">
+            산책
+        </button>
+
+        <button type="button" onclick="showPosts('취미', '카페')">
+            카페
+        </button>
+
+        <button type="button" onclick="showPosts('취미', '공연')">
+            공연
+        </button>
+        <button type="button" onclick="showPosts('취미', '미확정')">
+            미확정
+        </button>
+
+    </div>
+
+    <button type="button"
+            class="hide-button"
+            onclick="hideHobbyMenu()">
+        숨김
+    </button>
+
+</div>
+
+<!-- 기타 하위 메뉴 -->
+<div class="sports-sub-menu" id="exMenu">
+
+    <div class="sports-buttons">
+
+        <button type="button" onclick="showPosts('기타', '택시')">
+            택시
+        </button>
+
+        <button type="button" onclick="showPosts('기타', '카플')">
+            카플
+        </button>
+
+        <button type="button" onclick="showPosts('기타', '식사')">
+            식사
+        </button>
+        <button type="button" onclick="showPosts('기타', '미확정')">
+            미확정
+        </button>
+
+    </div>
+
+    <button type="button"
+            class="hide-button"
+            onclick="hideExMenu()">
+        숨김
+    </button>
+
+</div>
+
+<!-- 게시글 -->
+<main class="post-section">
+
+    <div class="post-header">
+        <h2>게시글</h2>
+
+        <button type="button"
+                onclick="toggleMyPosts()"
+                id="myPostsButton"
+                aria-pressed="false">
+            내 게시글
+        </button>
+
+        <button class="write-button"
+                onclick="location.href='/post/create'">
+            글쓰기
+        </button>
+    </div>
+
+    <!-- 게시글 나오는 형식 -->
+    <div class="post-list">
+
+        <div class="post-card"
+             th:each="post : ${posts}"
+             th:attr="data-id=${post.id},
+                  data-category=${post.category},
+                  data-author=${post.author},
+                  data-hashtags=${#strings.listJoin(post.hashtags, ',')},
+                  data-day=${post.meetingDay},
+                  data-start-time=${post.startTime},
+                  data-end-time=${post.endTime},
+                  data-current-members=${post.currentMembers},
+                  data-max-members=${post.maxMembers},
+                  data-recruit-type=${post.recruitType},
+                  data-male-current=${post.maleCurrentMembers},
+                  data-male-max=${post.maleMaxMembers},
+                  data-female-current=${post.femaleCurrentMembers},
+                  data-female-max=${post.femaleMaxMembers}">
+
+            <!-- 게시글 상단: 제목 + 삭제 버튼 -->
+            <div class="post-card-top">
+
+                <div class="post-title">
+                    제목:
+                    <span th:text="${post.title}"></span>
+                </div>
+
+                <!-- 작성자에게만 삭제 버튼 표시 -->
+                <form th:if="${post.author == member.stdName}"
+                      th:action="@{/post/{postId}/delete(postId=${post.id})}"
+                      method="post"
+                      onsubmit="return confirm('이 게시글을 삭제하겠습니까?');">
+
+                    <button type="submit" class="delete-post-button">
+                        삭제
+                    </button>
+
+                </form>
+
+            </div>
+
+            <!-- 작성자 -->
+            <div class="post-author">
+                작성자:
+                <span th:text="${post.author}"></span>
+            </div>
+
+            <!-- 시간 -->
+            <div class="post-time">
+                시간:
+                <span th:text="${post.startTime}"></span>
+                ~
+                <span th:text="${post.endTime}"></span>
+            </div>
+
+            <!-- 내용 -->
+            <div class="post-content">
+                내용:
+                <span th:text="${post.content}"></span>
+            </div>
+
+            <!-- 콘텐츠 -->
+            <div class="post-tags">
+                콘텐츠:
+                <span th:each="tag : ${post.hashtags}">
+                    #<span th:text="${tag}"></span>
+                </span>
+            </div>
+
+            <!-- 모집 정보 -->
+            <div class="post-recruit">
+
+                <!-- 무관 -->
+                <span th:if="${post.recruitType == '무관'}">
+                    남녀: 무관
+                    &nbsp;&nbsp;
+                    모집:
+                    <span th:text="${post.currentMembers}"></span>
+                    /
+                    <span th:text="${post.maxMembers}"></span>
+                    명
+                </span>
+
+                <!-- 성별별 -->
+                <span th:if="${post.recruitType == '성별별'}">
+
+                    남:
+                    <span th:text="${post.maleCurrentMembers}"></span>
+                    /
+                    <span th:text="${post.maleMaxMembers}"></span>
+
+                    &nbsp;&nbsp;
+
+                    여:
+                    <span th:text="${post.femaleCurrentMembers}"></span>
+                    /
+                    <span th:text="${post.femaleMaxMembers}"></span>
+
+                    &nbsp;&nbsp;
+
+                    모집:
+                    <span th:text="${post.currentMembers}"></span>
+                    /
+                    <span th:text="${post.maxMembers}"></span>
+                    명
+
+                </span>
+
+            </div>
+
+            <!-- 모집 전공 -->
+            <div>
+                모집 전공:
+                <span th:text="${post.recruitMajor}"></span>
+            </div>
+
+            <!-- 모집 학번 -->
+            <div>
+                모집 학번:
+
+                <span th:if="${post.recruitStartYear == null or post.recruitEndYear == null}">
+                    무관
+                </span>
+
+                <span th:if="${post.recruitStartYear != null and post.recruitEndYear != null}">
+                    <span th:text="${post.recruitStartYear}"></span>
+                    ~
+                    <span th:text="${post.recruitEndYear}"></span>학번
+                </span>
+
+            </div>
+
+            <!-- 요일 -->
+            <div class="post-day">
+                요일:
+                <span th:text="${post.meetingDay}"></span>
+            </div>
+
+            <!-- 가입하기 -->
+            <div class="post-button-area">
+
+                <button type="button"
+                        class="join-button"
+                        th:if="${post.author != member.stdName}"
+                        th:onclick="'joinPost(' + ${post.id} + ')'">
+                    가입하기
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+<!-- 시간표 검색 모달 -->
+<div id="timeSearchModal" class="matching-modal">
+
+    <div class="matching-modal-content">
+
+        <div class="matching-modal-header">
+
+            <h2>시간표 검색</h2>
+
+            <button type="button"
+                    class="matching-close-button"
+                    onclick="closeTimeSearch()">
+                ×
+            </button>
+
+        </div>
+
+        <div class="matching-modal-body">
+
+            <p>원하는 요일과 시간을 선택해주세요.</p>
+
+            <div class="time-search-table"
+                 id="timeSearchTable">
+                <!-- JavaScript가 시간표를 생성 -->
+            </div>
+
+            <small>
+                선택한 시간 중 하나라도 겹치는 게시글을 보여줍니다.
+            </small>
+
+        </div>
+
+        <div class="matching-modal-footer">
+
+            <button type="button"
+                    onclick="selectMyFreeTime()">
+                내 공강 시간 전체 선택
+            </button>
+
+            <button type="button"
+                    onclick="clearTimeSelection()">
+                전체 초기화
+            </button>
+
+            <button type="button"
+                    onclick="closeTimeSearch()">
+                닫기
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+
+    // 회원 관심 콘텐츠
+    const memberContents =
+        /*[[${stdCon}]]*/ "";
+
+    const recommendedContents =
+        memberContents
+            ? memberContents.split(",")
+            : [];
+
+    // 게시글 필터 상태 관리
+    let selectedCategory = null;
+    let selectedHashtag = null;
+    // 게시글 검색어
+    let searchKeyword = "";
+
+    let recommendationMode = false;
+    let selectedRecommendation = null;
+
+    let showingMyPosts = false;
+
+    // 시간표에서 선택한 시간
+    let selectedTimeSlots = new Set();
+    let timeSearchDragging = false;
+    let timeSearchDragValue = true;
+
+    // 시간 변환 함수
+    function timeToMinutes(time) {
+
+        if (!time) {
+            return null;
+        }
+
+        const parts = time.split(":");
+
+        if (parts.length < 2) {
+            return null;
+        }
+
+        const hour = Number(parts[0]);
+        const minute = Number(parts[1]);
+
+        if (isNaN(hour) || isNaN(minute)) {
+            return null;
+        }
+
+        return hour * 60 + minute;
+    }
+    // 검색어와 게시글의 띄어쓰기 제거
+    function normalizeSearchText(text) {
+        return String(text || "").replace(/\s+/g, "");
+    }
+
+    // 검색어 변경
+    function searchPosts(keyword) {
+
+        searchKeyword = keyword;
+
+        // 검색을 시작하면 내 게시글 보기 모드 해제
+        if (normalizeSearchText(keyword).length > 0) {
+
+            showingMyPosts = false;
+
+            const button = document.getElementById("myPostsButton");
+
+            button.textContent = "내 게시글";
+            button.setAttribute("aria-pressed", "false");
+        }
+
+        applyPostFilters();
+    }
+    // 게시글 필터 통합 함수
+    function applyPostFilters() {
+
+        const posts =
+            document.querySelectorAll(".post-card");
+
+        const myName =
+            /*[[${member.stdName}]]*/ "";
+
+        posts.forEach(function(post) {
+
+            let visible = true;
+
+            const category = post.dataset.category;
+            const author = post.dataset.author;
+
+            const hashtags = post.dataset.hashtags
+                ? post.dataset.hashtags.split(",")
+                : [];
+
+            // 1. 내 게시글 / 전체 게시글 필터
+            if (showingMyPosts) {
+
+                if (author !== myName) {
+                    visible = false;
+                }
+
+            } else {
+
+                if (author === myName) {
+                    visible = false;
+                }
+
+            }
+
+            // 모집 인원이 꽉 찬 게시글 숨김
+            const recruitType = post.dataset.recruitType;
+
+            if (recruitType === "무관") {
+
+                const currentMembers =
+                    Number(post.dataset.currentMembers);
+
+                const maxMembers =
+                    Number(post.dataset.maxMembers);
+
+                if (currentMembers >= maxMembers) {
+                    visible = false;
+                }
+
+            } else if (recruitType === "성별별") {
+
+                const maleCurrent =
+                    Number(post.dataset.maleCurrent);
+
+                const maleMax =
+                    Number(post.dataset.maleMax);
+
+                const femaleCurrent =
+                    Number(post.dataset.femaleCurrent);
+
+                const femaleMax =
+                    Number(post.dataset.femaleMax);
+
+                if (maleCurrent >= maleMax &&
+                    femaleCurrent >= femaleMax) {
+
+                    visible = false;
+
+                }
+
+            }
+
+            // 2. 카테고리 필터
+            if (selectedCategory &&
+                category !== selectedCategory) {
+
+                visible = false;
+
+            }
+
+            // 3. 세부 콘텐츠 필터
+            if (selectedHashtag &&
+                !hashtags.includes(selectedHashtag)) {
+
+                visible = false;
+
+            }
+
+            // 4. 추천 게시글 필터
+            if (recommendationMode) {
+
+                if (selectedRecommendation) {
+
+                    if (!hashtags.includes(selectedRecommendation)) {
+                        visible = false;
+                    }
+
+                } else {
+
+                    const isRecommended =
+                        recommendedContents.some(function(content) {
+
+                            return hashtags.includes(content);
+
+                        });
+
+                    if (!isRecommended) {
+                        visible = false;
+                    }
+
+                }
+
+            }
+
+            // 5. 시간표 검색 필터
+            if (selectedTimeSlots.size > 0) {
+
+                const postDay =
+                    post.dataset.day || "";
+
+                const postStart =
+                    timeToMinutes(post.dataset.startTime);
+
+                const postEnd =
+                    timeToMinutes(post.dataset.endTime);
+
+                if (postStart === null ||
+                    postEnd === null ||
+                    postEnd <= postStart) {
+
+                    visible = false;
+
+                } else {
+
+                    let hasTimeOverlap = false;
+
+                    selectedTimeSlots.forEach(function(slot) {
+
+                        const [selectedDay, selectedHour] =
+                            slot.split("-");
+
+                        if (!postDay.includes(selectedDay)) {
+                            return;
+                        }
+
+                        const slotStart =
+                            Number(selectedHour) * 60;
+
+                        const slotEnd =
+                            slotStart + 60;
+
+                        if (postStart < slotEnd &&
+                            postEnd > slotStart) {
+
+                            hasTimeOverlap = true;
+
+                        }
+
+                    });
+
+                    if (!hasTimeOverlap) {
+                        visible = false;
+                    }
+
+                }
+
+            }
+            // 6. 게시글 검색 필터
+            const normalizedKeyword =
+                normalizeSearchText(searchKeyword);
+
+            if (normalizedKeyword) {
+                // 내가 작성한 게시글은 검색 결과에서 제외
+                if (author === myName) {
+                    visible = false;
+                }
+                // 게시글 제목
+                const title =
+                    post.querySelector(".post-title span")?.textContent || "";
+
+                // 게시글 내용
+                const content =
+                    post.querySelector(".post-content span")?.textContent || "";
+
+                // 게시글 콘텐츠(해시태그)
+                const hashtagElements =
+                    post.querySelectorAll(".post-tags span span");
+
+                const searchHashtags = Array.from(hashtagElements)
+                    .map(tag => tag.textContent)
+                    .join(" ");
+
+                // 제목 + 내용 + 콘텐츠 합치기
+                const searchableText = normalizeSearchText(
+                    title + " " + content + " " + searchHashtags
+                );
+
+                // 검색어가 포함되지 않으면 숨김
+                if (!searchableText.includes(normalizedKeyword)) {
+                    visible = false;
+                }
+            }
+            // 최종 게시글 표시
+            post.style.display =
+                visible ? "" : "none";
+
+        });
+
+    }
+
+    // 전체 게시글
+    function showAllPosts() {
+
+        hideAllSubMenus();
+
+        showingMyPosts = false;
+
+        const button =
+            document.getElementById("myPostsButton");
+
+        button.textContent = "내 게시글";
+        button.setAttribute("aria-pressed", "false");
+
+        selectedCategory = null;
+        selectedHashtag = null;
+
+        recommendationMode = false;
+        selectedRecommendation = null;
+
+        applyPostFilters();
+
+    }
+
+    // 카테고리별 게시글
+    function showPosts(category, hashtag) {
+
+        selectedCategory = category;
+        selectedHashtag = hashtag || null;
+
+        recommendationMode = false;
+        selectedRecommendation = null;
+
+        applyPostFilters();
+
+    }
+
+    // 추천 게시글
+    function showRecommendedPosts(selectedContent) {
+
+        selectedCategory = null;
+        selectedHashtag = null;
+
+        recommendationMode = true;
+
+        selectedRecommendation =
+            selectedContent || null;
+
+        applyPostFilters();
+
+    }
+
+    // 하위 메뉴 관리
+    function hideAllSubMenus() {
+
+        document.getElementById("recommendMenu").style.display = "none";
+        document.getElementById("studyMenu").style.display = "none";
+        document.getElementById("sportsMenu").style.display = "none";
+        document.getElementById("clubMenu").style.display = "none";
+        document.getElementById("hobbyMenu").style.display = "none";
+        document.getElementById("exMenu").style.display = "none";
+
+    }
+
+    function showRecommendation() {
+
+        hideAllSubMenus();
+
+        document.getElementById("recommendMenu").style.display = "flex";
+
+        showRecommendedPosts();
+
+    }
+
+    function hideRecommendMenu() {
+
+        document.getElementById("recommendMenu").style.display = "none";
+
+    }
+
+    function showSportsMenu() {
+
+        hideAllSubMenus();
+
+        document.getElementById("sportsMenu").style.display = "flex";
+
+    }
+
+    function hideSportsMenu() {
+
+        document.getElementById("sportsMenu").style.display = "none";
+
+    }
+
+    function showStudyMenu() {
+
+        hideAllSubMenus();
+
+        document.getElementById("studyMenu").style.display = "flex";
+
+    }
+
+    function hideStudyMenu() {
+
+        document.getElementById("studyMenu").style.display = "none";
+
+    }
+
+    function showClubMenu() {
+
+        hideAllSubMenus();
+
+        document.getElementById("clubMenu").style.display = "flex";
+
+    }
+
+    function hideClubMenu() {
+
+        document.getElementById("clubMenu").style.display = "none";
+
+    }
+
+    function showHobbyMenu() {
+
+        hideAllSubMenus();
+
+        document.getElementById("hobbyMenu").style.display = "flex";
+
+    }
+
+    function hideHobbyMenu() {
+
+        document.getElementById("hobbyMenu").style.display = "none";
+
+    }
+
+    function showExMenu() {
+
+        hideAllSubMenus();
+
+        document.getElementById("exMenu").style.display = "flex";
+
+    }
+
+    function hideExMenu() {
+
+        document.getElementById("exMenu").style.display = "none";
+
+    }
+
+    // 추천 하위 메뉴 생성
+    function createRecommendationMenu() {
+
+        const container =
+            document.getElementById("recommendButtons");
+
+        container.innerHTML = "";
+
+        recommendedContents.forEach(function(content) {
+
+            const button =
+                document.createElement("button");
+
+            button.type = "button";
+            button.textContent = content;
+
+            button.onclick = function() {
+                showRecommendedPosts(content);
+            };
+
+            container.appendChild(button);
+
+        });
+
+    }
+
+    // 오늘의 시간표
+    const memberTime =
+        /*[[${memberTimeList}]]*/ [];
+
+    const dayList =
+        ["일", "월", "화", "수", "목", "금", "토"];
+
+    const today =
+        dayList[new Date().getDay()];
+
+    const timetable =
+        document.getElementById("todayTimetable");
+
+    for (let period = 1; period <= 9; period++) {
+
+        const cell =
+            document.createElement("div");
+
+        cell.classList.add("timetable-cell");
+
+        const value =
+            today + period;
+
+        if (memberTime.includes(value)) {
+            cell.classList.add("class-time");
+        } else {
+            cell.classList.add("free-time");
+        }
+
+        cell.textContent = period + "교시";
+
+        timetable.appendChild(cell);
+
+    }
+
+    // 게시글 가입 요청
+    function joinPost(postId) {
+
+        fetch("/post/" + postId + "/join", {
+            method: "POST"
+        })
+
+            .then(response => response.text())
+
+            .then(message => {
+
+                alert(message);
+
+                if (message === "가입되었습니다.") {
+                    location.reload();
+                }
+
+            })
+
+            .catch(error => {
+
+                console.error(error);
+
+                alert("오류가 발생했습니다.");
+
+            });
+
+    }
+
+    // 내 게시글 / 전체 게시글
+    function toggleMyPosts() {
+
+        showingMyPosts = !showingMyPosts;
+
+        const button =
+            document.getElementById("myPostsButton");
+
+        button.textContent =
+            showingMyPosts ? "전체 게시글" : "내 게시글";
+
+        button.setAttribute(
+            "aria-pressed",
+            String(showingMyPosts)
+        );
+
+        applyPostFilters();
+
+    }
+
+    // 시간표 검색 모달
+    function openTimeSearch() {
+
+        document.getElementById("timeSearchModal").style.display = "flex";
+
+    }
+
+    function closeTimeSearch() {
+
+        document.getElementById("timeSearchModal").style.display = "none";
+
+    }
+
+    // 시간표 검색표 생성
+    function createTimeSearchTable() {
+
+        const table =
+            document.getElementById("timeSearchTable");
+
+        table.innerHTML = "";
+
+        const days =
+            ["월", "화", "수", "목", "금"];
+
+        table.style.display = "grid";
+
+        table.style.gridTemplateColumns =
+            "65px repeat(5, minmax(0, 1fr))";
+
+        // 첫 번째 행: 시간 + 요일
+        const emptyHeader =
+            document.createElement("div");
+
+        emptyHeader.className = "time-search-header";
+        emptyHeader.textContent = "시간";
+
+        table.appendChild(emptyHeader);
+
+        days.forEach(function(day) {
+
+            const header =
+                document.createElement("div");
+
+            header.className = "time-search-header";
+            header.textContent = day;
+
+            table.appendChild(header);
+
+        });
+
+        // 두 번째 행: 요일별 초기화 버튼
+        const emptyCell =
+            document.createElement("div");
+
+        emptyCell.className = "time-search-empty";
+
+        table.appendChild(emptyCell);
+
+        days.forEach(function(day) {
+
+            const clearButton =
+                document.createElement("button");
+
+            clearButton.type = "button";
+            clearButton.className = "time-search-day-clear";
+            clearButton.textContent = "초기화";
+
+            clearButton.addEventListener("click", function() {
+
+                const slotsToDelete = [];
+
+                selectedTimeSlots.forEach(function(slot) {
+
+                    if (slot.startsWith(day + "-")) {
+                        slotsToDelete.push(slot);
+                    }
+
+                });
+
+                slotsToDelete.forEach(function(slot) {
+                    selectedTimeSlots.delete(slot);
+                });
+
+                createTimeSearchTable();
+                applyPostFilters();
+
+            });
+
+            table.appendChild(clearButton);
+
+        });
+
+        // 08시부터 19시까지
+        for (let hour = 8; hour <= 19; hour++) {
+
+            const time =
+                document.createElement("div");
+
+            time.className = "time-search-empty";
+            time.textContent = hour + "시";
+
+            table.appendChild(time);
+
+            // 요일별 시간 칸
+            days.forEach(function(day) {
+
+                const cell =
+                    document.createElement("button");
+
+                cell.type = "button";
+                cell.className = "time-search-cell";
+
+                const slot =
+                    day + "-" + hour;
+
+                cell.dataset.slot = slot;
+
+                if (selectedTimeSlots.has(slot)) {
+                    cell.classList.add("selected");
+                }
+
+                cell.setAttribute(
+                    "aria-pressed",
+                    String(selectedTimeSlots.has(slot))
+                );
+
+                cell.addEventListener("click", function(event) {
+
+                    if (event.detail === 0) {
+                        setSearchCell(
+                            cell,
+                            !selectedTimeSlots.has(slot)
+                        );
+                    }
+
+                });
+
+                table.appendChild(cell);
+
+            });
+
+        }
+
+        function setSearchCell(cell, selected) {
+
+            const slot = cell.dataset.slot;
+
+            if (selected) {
+                selectedTimeSlots.add(slot);
+            } else {
+                selectedTimeSlots.delete(slot);
+            }
+
+            cell.classList.toggle("selected", selected);
+
+            cell.setAttribute(
+                "aria-pressed",
+                String(selected)
+            );
+
+            applyPostFilters();
+
+        }
+
+        table.onpointerdown = function(event) {
+
+            const cell =
+                event.target.closest(".time-search-cell");
+
+            if (!cell) return;
+
+            event.preventDefault();
+
+            timeSearchDragging = true;
+
+            timeSearchDragValue =
+                !selectedTimeSlots.has(cell.dataset.slot);
+
+            setSearchCell(cell, timeSearchDragValue);
+
+        };
+
+        table.onpointermove = function(event) {
+
+            if (!timeSearchDragging) return;
+
+            const cell =
+                document.elementFromPoint(
+                    event.clientX,
+                    event.clientY
+                )?.closest(".time-search-cell");
+
+            if (cell && table.contains(cell)) {
+                setSearchCell(cell, timeSearchDragValue);
+            }
+
+        };
+
+    }
+
+    window.addEventListener("pointerup", function() {
+
+        timeSearchDragging = false;
+
+    });
+
+    window.addEventListener("pointercancel", function() {
+
+        timeSearchDragging = false;
+
+    });
+
+    // 내 공강 시간 전체 선택
+    function selectMyFreeTime() {
+
+        selectedTimeSlots.clear();
+
+        const days =
+            ["월", "화", "수", "목", "금"];
+
+        days.forEach(function(day) {
+
+            for (let period = 1; period <= 9; period++) {
+
+                const classTime =
+                    day + period;
+
+                const hour =
+                    period + 8;
+
+                if (!memberTime.includes(classTime)) {
+
+                    selectedTimeSlots.add(
+                        day + "-" + hour
+                    );
+
+                }
+
+            }
+
+        });
+
+        createTimeSearchTable();
+        applyPostFilters();
+
+    }
+
+    // 선택한 시간 초기화
+    function clearTimeSelection() {
+
+        selectedTimeSlots.clear();
+
+        createTimeSearchTable();
+        applyPostFilters();
+
+    }
+
+    // 페이지 최초 실행
+    createRecommendationMenu();
+    createTimeSearchTable();
+    applyPostFilters();
+
+</script>
+
+</body>
+</html>

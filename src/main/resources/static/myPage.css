@@ -1,0 +1,538 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* 상단 메뉴 */
+.top-menu {
+    height: 65px;
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+}
+
+.back-button {
+    padding: 10px 18px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.back-button:hover {
+    background-color: #eeeeee;
+}
+
+/* 페이지 영역 */
+.page-container {
+    width: 1100px;
+    max-width: calc(100% - 40px);
+    margin: 50px auto 25px;
+}
+
+.page-title {
+    margin-bottom: 25px;
+}
+
+.page-title h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+/* 회원정보 + 공개설정 배치 */
+.mypage-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+    gap: 25px;
+    align-items: start;
+}
+
+/* 프로필 카드 */
+.profile-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+}
+
+.profile-icon {
+    text-align: center;
+    font-size: 60px;
+    margin-bottom: 20px;
+}
+
+/* 회원정보 항목 */
+.info-row {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 0;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-title {
+    width: 130px;
+    flex-shrink: 0;
+    font-weight: bold;
+    color: #555555;
+}
+
+.info-value {
+    flex: 1;
+    min-width: 0;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* 공개 설정 카드 */
+.visibility-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+}
+
+.visibility-title {
+    margin: 0 0 8px;
+    font-size: 20px;
+}
+
+.visibility-description {
+    margin: 0 0 20px;
+    color: #777;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* 공개 설정 항목 */
+.visibility-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 17px 0;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.visibility-row:last-child {
+    border-bottom: none;
+}
+
+.visibility-label {
+    font-weight: bold;
+    color: #555;
+    white-space: nowrap;
+}
+
+.visibility-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.visibility-button {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    background: white;
+    color: #666;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.visibility-button:hover {
+    background: #f1f1f1;
+}
+
+.visibility-button.active {
+    background: #333;
+    border-color: #333;
+    color: white;
+}
+
+/* 버튼 영역 */
+.button-area {
+    width: 1100px;
+    max-width: calc(100% - 40px);
+    margin: 0 auto 50px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.button-area button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    background-color: #333;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.button-area button:hover {
+    background-color: #555;
+}
+
+/* 태블릿 및 작은 화면 */
+@media (max-width: 850px) {
+    .mypage-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .top-menu {
+        padding: 0 15px;
+    }
+
+    .page-container {
+        margin-top: 30px;
+    }
+
+    .profile-card,
+    .visibility-card {
+        padding: 20px;
+    }
+
+    .info-title {
+        width: 100px;
+    }
+
+    .visibility-row {
+        flex-wrap: wrap;
+    }
+}
+/* ============================= */
+/* 활동 기록 버튼 */
+/* ============================= */
+
+.activity-history-section {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eeeeee;
+}
+
+.activity-history-section h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+}
+
+.activity-history-section p {
+    margin: 0 0 15px;
+    color: #777;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.activity-history-open-button {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background-color: #333;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.activity-history-open-button:hover {
+    background-color: #555;
+}
+
+
+/* ============================= */
+/* 활동 기록 팝업 */
+/* ============================= */
+
+.activity-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 1000;
+}
+
+/* hidden 속성이 CSS에 의해 무시되지 않도록 */
+.activity-modal[hidden] {
+    display: none !important;
+}
+
+/* 배경 */
+.activity-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* 팝업 본체 */
+.activity-modal-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    background-color: white;
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+}
+
+/* 팝업 상단 */
+.activity-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.activity-modal-header h2 {
+    margin: 0;
+    font-size: 21px;
+}
+
+.activity-modal-header button {
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 8px;
+    background-color: #f3f3f3;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.activity-modal-header button:hover {
+    background-color: #e5e5e5;
+}
+
+
+/* ============================= */
+/* 전체 삭제 버튼 */
+/* ============================= */
+
+.activity-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px 0;
+}
+
+.activity-delete-all-button {
+    padding: 8px 14px;
+    border: 1px solid #dc3545;
+    border-radius: 7px;
+    background-color: white;
+    color: #dc3545;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.activity-delete-all-button:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+
+/* ============================= */
+/* 활동 기록 목록 */
+/* ============================= */
+
+#activity-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.activity-history-row {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    background-color: #fafafa;
+    transition: 0.2s;
+}
+
+.activity-history-row:hover {
+    border-color: #cccccc;
+    background-color: #f5f5f5;
+}
+
+/* 기록 상세보기 버튼 */
+.activity-history-item {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+    padding: 5px;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
+.activity-history-item strong {
+    width: 100%;
+    font-size: 15px;
+    color: #333;
+    overflow-wrap: anywhere;
+}
+
+.activity-history-item span {
+    width: 100%;
+    font-size: 13px;
+    color: #777;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* 개별 삭제 */
+.activity-delete-button {
+    flex-shrink: 0;
+    align-self: center;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    background-color: white;
+    color: #666;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.activity-delete-button:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+
+/* ============================= */
+/* 활동 기록 상세 팝업 */
+/* ============================= */
+
+/* 상세 팝업은 목록 팝업보다 위에 표시 */
+#activity-detail-modal {
+    z-index: 1100;
+}
+
+.activity-detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-top: 20px;
+}
+
+.activity-detail-item {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.activity-detail-item:last-child {
+    border-bottom: none;
+}
+
+.activity-detail-item strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #555;
+}
+
+.activity-detail-item p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #333;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+/* 상세 팝업 하단 */
+.activity-detail-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 15px;
+    border-top: 1px solid #eeeeee;
+}
+
+.activity-detail-footer button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #333;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.activity-detail-footer button:hover {
+    background-color: #555;
+}
+
+
+/* ============================= */
+/* 모바일 화면 */
+/* ============================= */
+
+@media (max-width: 600px) {
+
+    .activity-modal {
+        padding: 12px;
+    }
+
+    .activity-modal-content {
+        padding: 18px;
+        max-height: 90vh;
+        border-radius: 12px;
+    }
+
+    .activity-modal-header h2 {
+        font-size: 18px;
+    }
+
+    .activity-history-row {
+        gap: 6px;
+        padding: 9px;
+    }
+
+    .activity-history-item strong {
+        font-size: 14px;
+    }
+
+    .activity-history-item span {
+        font-size: 12px;
+    }
+
+    .activity-delete-button {
+        padding: 7px 9px;
+        font-size: 12px;
+    }
+
+    .activity-detail-item p {
+        font-size: 14px;
+    }
+}

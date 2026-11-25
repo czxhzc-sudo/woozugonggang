@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="navigation(activeTab)">
+    <header class="site-header">
+        <a class="brand" th:href="@{/main}" aria-label="우주공강 홈">
+            <span class="brand-mark">✦</span><span>우주공강</span>
+        </a>
+        <nav class="desktop-nav" aria-label="주 메뉴">
+            <a th:href="@{/main}" th:classappend="${activeTab == 'meetups'} ? ' active' : ''">모집</a>
+            <a th:href="@{/my-group}" th:classappend="${activeTab == 'chat'} ? ' active' : ''">채팅</a>
+            <a th:href="@{/timetable}" th:classappend="${activeTab == 'timetable'} ? ' active' : ''">시간표</a>
+            <a th:href="@{/mypage}" th:classappend="${activeTab == 'profile'} ? ' active' : ''">내 정보</a>
+        </nav>
+        <div class="header-actions">
+            <button th:if="${activeTab == 'meetups'}" class="search-button" type="button"
+                    onclick="openTimeSearch()" aria-label="시간표로 게시글 검색" title="시간표 검색">🔍</button>
+            <button class="profile-button" type="button" onclick="location.href='/mypage'"
+                    th:text="${session.userName}">사용자</button>
+            <button class="logout-button-new" type="button" onclick="location.href='/member/logout'">로그아웃</button>
+        </div>
+    </header>
+    <nav class="mobile-nav" aria-label="모바일 주 메뉴">
+        <a th:href="@{/main}" th:classappend="${activeTab == 'meetups'} ? ' active' : ''"><span>◎</span>모집</a>
+        <a th:href="@{/my-group}" th:classappend="${activeTab == 'chat'} ? ' active' : ''"><span>◇</span>채팅</a>
+        <a th:href="@{/timetable}" th:classappend="${activeTab == 'timetable'} ? ' active' : ''"><span>▦</span>시간표</a>
+        <a th:href="@{/mypage}" th:classappend="${activeTab == 'profile'} ? ' active' : ''"><span>○</span>내 정보</a>
+    </nav>
+</div>
+</body>
+</html>

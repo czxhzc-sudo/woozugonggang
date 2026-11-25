@@ -1,0 +1,72 @@
+body {
+    margin: 0;
+    padding: 40px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+.timetable {
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+.timetable th,
+.timetable td {
+    width: 90px;
+    height: 55px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.timetable th {
+    background-color: #f5f5f5;
+}
+
+.timetable td {
+    background-color: white;
+}
+
+.timetable td.timetable-selected {
+    background-color: #dbeafe;
+}
+
+.timetable input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+}
+
+.help-text {
+    margin-top: 15px;
+    color: #777;
+}
+
+button {
+    margin-top: 25px;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+a {
+    color: #333;
+    text-decoration: none;
+}
+.back-main {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+
+    text-decoration: none;
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.back-main:hover {
+    text-decoration: underline;
+}

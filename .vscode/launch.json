@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "우주공강 실행 (MySQL)",
+      "request": "launch",
+      "mainClass": "com.example.teamjavaprogramming.TeamjavaprogrammingApplication",
+      "projectName": "Teamjavaprogramming",
+      "cwd": "${workspaceFolder}",
+      "args": "--server.port=8080",
+      "console": "integratedTerminal"
+    }
+  ]
+}

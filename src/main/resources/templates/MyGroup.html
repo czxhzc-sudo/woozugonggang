@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>내 모임</title>
+    <link rel="stylesheet" th:href="@{/MyGroup.css}">
+    <link rel="stylesheet" th:href="@{/vercel-theme.css}">
+    <link rel="stylesheet" th:href="@{/button-unity.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/AppNav :: navigation('chat')}"></div>
+
+<div class="chat-container"
+     th:attr="data-username=${session.userName}">
+
+    <!-- 왼쪽 : 내 모임 목록 -->
+    <div class="group-sidebar">
+
+        <div class="sidebar-header">
+            <h2>내 모임</h2>
+        </div>
+
+        <div class="group-list">
+
+            <div class="group-card"
+                 th:each="group : ${myGroups}"
+                 th:attr="data-room-id=${group.id}"
+                 onclick="selectRoom(this)">
+                <div class="group-name-row">
+                    <div class="group-name"
+                        th:text="${group.roomName}">
+                        모임 이름
+                    </div>
+                    <!-- 안 읽은 메시지 숫자 -->
+                    <span class="unread-badge"
+                          th:if="${unreadCounts[group.id] != null and unreadCounts[group.id] > 0}"
+                          th:text="${unreadCounts[group.id] > 99 ? '99+' : unreadCounts[group.id]}">
+</span>
+                </div>
+                <div class="group-date"
+                     th:text="${#temporals.format(group.createdAt, 'yyyy-MM-dd HH:mm')}">
+                    생성 시간
+                </div>
+
+            </div>
+
+            <div class="empty"
+                 th:if="${myGroups.isEmpty()}">
+                아직 가입한 모임이 없습니다.
+            </div>
+
+        </div>
+
+        <button class="back-button"
+                onclick="location.href='/main'">
+            메인으로 돌아가기
+        </button>
+
+    </div>
+
+
+    <!-- 오른쪽 : 채팅방 -->
+    <div class="chat-area">
+
+        <div class="chat-header">
+            <h2 id="chat-room-name">
+                모임을 선택해주세요
+            </h2>
+            <!-- 설정 버튼 -->
+            <div class="chat-settings">
+                <button id="settings-button"
+                        type="button"
+                        onclick="toggleSettings()"
+                        disabled>
+                    ⚙ 설정
+                </button>
+                <!-- 설정 메뉴 -->
+                <div id="settings-menu" hidden>
+                    <!-- 채팅방 탈퇴 -->
+                    <button class="leave-button" onclick="leaveChatRoom()">
+                        채팅방 탈퇴
+                    </button>
+                    <!-- 채팅방 전체 삭제: 방장에게만 표시 -->
+                    <button id="destroy-room-button"
+                            class="destroy-room-button"
+                            type="button"
+                            onclick="destroyChatRoom()"
+                            hidden>
+                        채팅방 전체 삭제
+                    </button>
+                    <!-- 참여자 목록 -->
+                    <div class="participant-section">
+                        <h3>참여자</h3>
+                        <div id="participant-list">
+                            <p class="participant-loading">참여자 목록을 불러오는 중...</p>
+                        </div>
+                    </div>
+                    <!-- 추방 회원 관리: 방장에게만 표시 -->
+                    <div id="banned-member-section"
+                         class="banned-member-section"
+                         hidden>
+                        <h3>추방 회원 관리</h3>
+                        <div id="banned-member-list">
+                            <p class="participant-loading">
+                                추방 회원 목록을 불러오는 중...
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+
+            <div class="welcome-message">
+                왼쪽에서 모임을 선택하면<br>
+                채팅방이 나타납니다.
+            </div>
+
+        </div>
+
+        <div class="chat-input-area">
+
+            <input type="text"
+                   id="message-input"
+                   placeholder="메시지를 입력하세요."
+                   disabled>
+
+            <button id="send-button"
+                    disabled>
+                전송
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- 회원 프로필 팝업 -->
+<div id="member-profile-modal" hidden>
+    <div class="profile-backdrop" onclick="closeMemberProfile()"></div>
+    <div class="profile-popup">
+        <div class="profile-popup-header">
+            <h3>회원 프로필</h3>
+            <button class="profile-close-button"
+                    onclick="closeMemberProfile()">×</button>
+        </div>
+        <!-- 기본 정보 / 시간표 전환 -->
+        <div class="profile-tabs">
+            <button id="profile-info-tab"
+                    class="profile-tab active"
+                    onclick="showProfileView('info')">
+                기본 정보
+            </button>
+            <button id="profile-timetable-tab"
+                    class="profile-tab"
+                    onclick="showProfileView('timetable')">
+                시간표
+            </button>
+        </div>
+        <!-- 기본 정보 -->
+        <div id="profile-info-view">
+
+            <div class="profile-user">
+                <div id="profile-gender-icon" class="gender-icon"></div>
+                <h3 id="profile-name">회원 이름</h3>
+            </div>
+
+            <div class="profile-info-list">
+
+                <div class="profile-info-item">
+                    <span>학교</span>
+                    <strong id="profile-school">-</strong>
+                </div>
+
+                <div class="profile-info-item">
+                    <span>학번</span>
+                    <strong id="profile-student-number">-</strong>
+                </div>
+
+                <div class="profile-info-item">
+                    <span>관심 콘텐츠</span>
+                    <strong id="profile-interests">-</strong>
+                </div>
+
+                <div class="profile-info-item">
+                    <span>전공</span>
+                    <strong id="profile-major">-</strong>
+                </div>
+
+                <div class="profile-info-item">
+                    <span>성별</span>
+                    <strong id="profile-gender">-</strong>
+                </div>
+            </div>
+        </div>
+        <!-- 시간표 -->
+        <div id="profile-timetable-view" hidden>
+            <div id="member-timetable"></div>
+        </div>
+    </div>
+</div>
+<script>
+
+    // 현재 선택한 채팅방 ID
+    let currentRoomId = null;
+    let messageTimer = null;
+
+    // 현재 로그인한 사용자 이름
+    const username =
+        document.querySelector(".chat-container")
+            .dataset.username;
+
+
+    // 채팅방 선택
+    function selectRoom(element) {
+
+        // 선택한 방의 ID 가져오기
+        currentRoomId =
+            element.getAttribute("data-room-id");
+
+        // 선택한 방의 이름 가져오기
+        const roomName =
+            element.querySelector(".group-name").textContent;
+
+        // 방 이름을 오른쪽 상단에 표시
+        document.getElementById("chat-room-name")
+            .textContent = roomName;
+
+        // 메시지 입력창 활성화
+        document.getElementById("message-input")
+            .disabled = false;
+
+        // 전송 버튼 활성화
+        document.getElementById("send-button")
+            .disabled = false;
+        document.getElementById("settings-button")
+            .disabled = false;
+        document.getElementById("settings-menu").hidden = true;
+        roomMembers = [];
+        document.getElementById("participant-list").innerHTML =
+            '<p class="participant-loading">참여자 목록을 불러오는 중...</p>';
+
+        document.getElementById("member-profile-modal").hidden = true;
+        selectedMemberUsername = null;
+        // 선택된 모임 표시
+        document.querySelectorAll(".group-card")
+            .forEach(card => {
+                card.classList.remove("selected");
+            });
+
+        element.classList.add("selected");
+
+        // 해당 채팅방의 메시지 가져오기
+        loadMessages(currentRoomId);
+        startMessageRefresh();
+    }
+    // 설정 메뉴 열기 / 닫기
+    function toggleSettings() {
+        const menu = document.getElementById("settings-menu");
+        menu.hidden = !menu.hidden;
+        // 설정 메뉴를 열 때 참여자 목록 불러오기
+        if (!menu.hidden && currentRoomId !== null) {
+            loadRoomMembers();
+        }
+    }
+    function startMessageRefresh() {
+
+        // 기존 타이머가 있다면 제거
+        if (messageTimer !== null) {
+            clearInterval(messageTimer);
+        }
+
+        // 3초마다 메시지 확인
+        messageTimer = setInterval(function () {
+            if (currentRoomId !== null) {
+                loadMessages(currentRoomId);
+            }
+        }, 3000);
+    }
+    // 채팅방 메시지 가져오기
+    function loadMessages(roomId) {
+        fetch("/chat/" + roomId + "/messages")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("메시지를 불러올 수 없습니다.");
+                }
+                return response.json();
+            })
+            .then(messages => {
+                // 다른 채팅방을 선택했다면 이전 요청 결과 무시
+                if (String(currentRoomId) !== String(roomId)) {
+                    return;
+                }
+                const chatMessages =
+                    document.getElementById("chat-messages");
+                chatMessages.innerHTML = "";
+                messages.forEach(message => {
+                    const messageDiv = document.createElement("div");
+                    messageDiv.classList.add("message");
+                    if (message.username === username) {
+                        messageDiv.classList.add("my-message");
+                    } else {
+                        messageDiv.classList.add("other-message");
+                    }
+                    const nameDiv = document.createElement("div");
+                    nameDiv.classList.add("message-name");
+                    nameDiv.textContent = message.senderName;
+                    const textDiv = document.createElement("div");
+                    textDiv.classList.add("message-text");
+                    textDiv.textContent = message.message;
+                    messageDiv.appendChild(nameDiv);
+                    messageDiv.appendChild(textDiv);
+                    chatMessages.appendChild(messageDiv);
+                });
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            })
+            .catch(error => {
+                console.error("메시지 불러오기 실패:", error);
+            });
+    }
+    // 메시지 보내기
+    function sendMessage() {
+
+        if (currentRoomId === null) {
+            return;
+        }
+
+        const input = document.getElementById("message-input");
+        const message = input.value.trim();
+
+        if (message === "") {
+            return;
+        }
+
+        const roomId = currentRoomId;
+
+        const params = new URLSearchParams();
+        params.append("message", message);
+
+        fetch("/chat/" + roomId + "/messages", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+
+            body: params
+
+        })
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error("메시지 전송에 실패했습니다.");
+                }
+
+                return response.json();
+            })
+            .then(savedMessage => {
+
+                input.value = "";
+
+                if (String(currentRoomId) === String(roomId)) {
+                    loadMessages(roomId);
+                }
+
+            })
+            .catch(error => {
+                console.error("메시지 전송 실패:", error);
+                alert(error.message);
+            });
+    }
+    // 채팅방 탈퇴
+    function leaveChatRoom() {
+
+        if (currentRoomId === null) {
+            return;
+        }
+
+        // 탈퇴 확인
+        const confirmLeave = confirm(
+            "정말 이 채팅방에서 탈퇴하시겠습니까?\n기존 채팅 메시지는 삭제되지 않습니다."
+        );
+
+        if (!confirmLeave) {
+            return;
+        }
+
+        const roomId = currentRoomId;
+
+        fetch("/my-group/" + roomId + "/leave", {
+            method: "POST"
+        })
+            .then(async response => {
+
+                const result = await response.text();
+
+                if (!response.ok) {
+                    throw new Error(result || "탈퇴에 실패했습니다.");
+                }
+
+                return result;
+            })
+            .then(result => {
+
+                // 메시지 자동 새로고침 중지
+                if (messageTimer !== null) {
+                    clearInterval(messageTimer);
+                    messageTimer = null;
+                }
+
+                // 왼쪽 모임 목록에서 해당 방 제거
+                const selectedCard = document.querySelector(
+                    '.group-card[data-room-id="' + roomId + '"]'
+                );
+
+                if (selectedCard) {
+                    selectedCard.remove();
+                }
+
+                // 현재 채팅방 초기화
+                currentRoomId = null;
+
+                document.getElementById("chat-room-name").textContent =
+                    "모임을 선택해주세요";
+
+                document.getElementById("chat-messages").innerHTML =
+                    '<div class="welcome-message">왼쪽에서 모임을 선택하면<br>채팅방이 나타납니다.</div>';
+
+                document.getElementById("message-input").value = "";
+                document.getElementById("message-input").disabled = true;
+
+                document.getElementById("send-button").disabled = true;
+                document.getElementById("settings-button").disabled = true;
+
+                document.getElementById("settings-menu").hidden = true;
+
+                // 모임이 하나도 남지 않은 경우
+                if (document.querySelectorAll(".group-card").length === 0) {
+
+                    const emptyMessage = document.createElement("div");
+                    emptyMessage.classList.add("empty");
+                    emptyMessage.textContent = "아직 가입한 모임이 없습니다.";
+
+                    document.querySelector(".group-list")
+                        .appendChild(emptyMessage);
+                }
+
+                alert("채팅방에서 탈퇴했습니다.");
+
+            })
+            .catch(error => {
+
+                console.error("채팅방 탈퇴 실패:", error);
+                alert(error.message);
+
+            });
+    }
+
+    // 전송 버튼 클릭
+    document.getElementById("send-button")
+        .addEventListener("click", sendMessage);
+
+    // Enter 키로 메시지 보내기
+    document.getElementById("message-input")
+        .addEventListener("keydown", function(event) {
+
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+
+        });
+    // 현재 채팅방 참여자 정보 저장
+    let roomMembers = [];
+
+
+    // 참여자 목록 불러오기
+    async function loadRoomMembers() {
+
+        const participantList = document.getElementById("participant-list");
+
+        participantList.innerHTML = "";
+
+        const loading = document.createElement("p");
+        loading.className = "participant-loading";
+        loading.textContent = "참여자 목록을 불러오는 중...";
+
+        participantList.appendChild(loading);
+
+        try {
+
+            const response = await fetch(
+                `/my-group/${currentRoomId}/members`
+            );
+
+            if (!response.ok) {
+                throw new Error("참여자 목록을 가져오지 못했습니다.");
+            }
+
+            roomMembers = await response.json();
+
+            participantList.innerHTML = "";
+            // 현재 로그인한 회원이 방장인지 확인
+            const currentRoomMember = roomMembers.find(
+                item => item.username === username
+            );
+            const isOwner = currentRoomMember &&
+                Number(currentRoomMember.memberRole) === 1;
+            // 방장에게만 전체 삭제 버튼 표시
+            const destroyButton =
+                document.getElementById("destroy-room-button");
+            destroyButton.hidden = !isOwner;
+            // 추방 회원 영역 표시 여부
+            const bannedSection =
+                document.getElementById("banned-member-section");
+            bannedSection.hidden = !isOwner;
+            // 방장이라면 추방 회원 목록 불러오기
+            if (isOwner) {
+                await loadBannedMembers();
+            } else {
+                document.getElementById("banned-member-list").innerHTML = "";
+            }
+
+            if (roomMembers.length === 0) {
+                participantList.textContent = "참여자가 없습니다.";
+                return;
+            }
+
+            roomMembers.forEach(member => {
+                // 참여자 한 명을 감싸는 영역
+                const row = document.createElement("div");
+                row.className = "participant-row";
+
+                // 프로필 버튼
+                const button = document.createElement("button");
+                button.className = "participant-card";
+
+                // 성별에 따른 아이콘 색상
+                const icon = document.createElement("span");
+                icon.className = "gender-icon";
+
+                if (member.gender && member.gender.includes("남")) {
+                    icon.classList.add("male");
+                } else if (member.gender && member.gender.includes("여")) {
+                    icon.classList.add("female");
+                }
+                // 닉네임
+                const name = document.createElement("span");
+                name.className = "participant-name";
+                name.textContent = member.name || "이름 없음";
+
+                button.appendChild(icon);
+                button.appendChild(name);
+                // 방장 표시
+                if (Number(member.memberRole) === 1) {
+                    const ownerBadge = document.createElement("span");
+                    ownerBadge.className = "owner-badge";
+                    ownerBadge.textContent = "방장";
+                    button.appendChild(ownerBadge);
+                }
+                // 회원 클릭 시 프로필 열기
+                button.addEventListener("click", () => {
+                    openMemberProfile(member.username);
+                });
+                row.appendChild(button);
+
+                // 현재 로그인한 사용자가 방장인지 확인
+                const currentMember = roomMembers.find(
+                    item => item.username === username
+                );
+
+                // 방장이 다른 회원을 보고 있을 때만 관리 버튼 표시
+                if (
+                    currentMember &&
+                    Number(currentMember.memberRole) === 1 &&
+                    member.username !== username
+                ) {
+                    // 방장 위임 버튼
+                    const transferButton = document.createElement("button");
+
+                    transferButton.className = "transfer-owner-button";
+                    transferButton.textContent = "방장 위임";
+
+                    transferButton.addEventListener("click", (event) => {
+                        event.stopPropagation();
+                        transferOwnership(member.username);
+                    });
+
+                    row.appendChild(transferButton);
+                    // 다른 방장이 아닌 참여자에게만 추방 버튼 표시
+                    if (Number(member.memberRole) !== 1) {
+                        const kickButton = document.createElement("button");
+                        kickButton.className = "kick-member-button";
+                        kickButton.textContent = "추방";
+                        kickButton.addEventListener("click", (event) => {
+                            event.stopPropagation();
+                            kickMember(member.username);
+                        });
+                        row.appendChild(kickButton);
+                    }
+                }
+
+                participantList.appendChild(row);
+            });
+
+        } catch (error) {
+
+            participantList.textContent =
+                "참여자 목록을 불러오지 못했습니다.";
+
+            console.error(error);
+        }
+    }
+
+    // 추방 회원 목록 불러오기
+    async function loadBannedMembers() {
+
+        const container =
+            document.getElementById("banned-member-list");
+
+        container.innerHTML = "추방 회원 목록을 불러오는 중...";
+
+        if (currentRoomId === null) {
+            return;
+        }
+
+        const roomId = currentRoomId;
+
+        try {
+
+            const response = await fetch(
+                `/my-group/${roomId}/bans`
+            );
+
+            if (!response.ok) {
+                throw new Error("추방 회원 목록을 불러오지 못했습니다.");
+            }
+
+            const bans = await response.json();
+
+            // 다른 채팅방을 선택했다면 이전 요청 결과 무시
+            if (String(currentRoomId) !== String(roomId)) {
+                return;
+            }
+
+            container.innerHTML = "";
+
+            if (bans.length === 0) {
+                container.textContent = "추방된 회원이 없습니다.";
+                return;
+            }
+
+            bans.forEach(ban => {
+
+                const row = document.createElement("div");
+                row.className = "banned-member-row";
+
+                // 회원 정보
+                const info = document.createElement("div");
+                info.className = "banned-member-info";
+
+                const name = document.createElement("span");
+                name.className = "banned-member-name";
+                name.textContent = ban.name || ban.username;
+
+                const date = document.createElement("span");
+                date.className = "banned-member-date";
+
+                if (ban.bannedAt) {
+                    const bannedDate = new Date(ban.bannedAt);
+
+                    date.textContent = Number.isNaN(bannedDate.getTime())
+                        ? ban.bannedAt
+                        : bannedDate.toLocaleString("ko-KR");
+                } else {
+                    date.textContent = "추방 날짜 정보 없음";
+                }
+
+                info.appendChild(name);
+                info.appendChild(date);
+
+                // 추방 해제 버튼
+                const unbanButton = document.createElement("button");
+                unbanButton.className = "unban-button";
+                unbanButton.textContent = "추방 해제";
+
+                unbanButton.addEventListener("click", () => {
+                    unbanMember(ban.username, ban.name);
+                });
+
+                row.appendChild(info);
+                row.appendChild(unbanButton);
+
+                container.appendChild(row);
+            });
+
+        } catch (error) {
+
+            container.textContent =
+                "추방 회원 목록을 불러오지 못했습니다.";
+
+            console.error("추방 회원 조회 실패:", error);
+        }
+    }
+
+    // 회원 프로필 열기
+    function openMemberProfile(username) {
+
+        const member = roomMembers.find(
+            item => item.username === username
+        );
+        if (!member) {
+            return;
+        }
+        document.getElementById("profile-name").textContent =
+            member.name || "-";
+        document.getElementById("profile-school").textContent = member.school ?? "비공개";
+        document.getElementById("profile-student-number").textContent = member.studentNumber ?? "비공개";
+        document.getElementById("profile-interests").textContent = member.interests ?? "비공개";
+        document.getElementById("profile-major").textContent = member.major ?? "비공개";
+        document.getElementById("profile-gender").textContent = member.gender ?? "비공개";
+        // 프로필 아이콘 색상
+        const icon = document.getElementById("profile-gender-icon");
+        icon.className = "gender-icon";
+        if (member.gender && member.gender.includes("남")) {
+            icon.classList.add("male");
+        } else if (member.gender && member.gender.includes("여")) {
+            icon.classList.add("female");
+        }
+        // 현재 선택한 회원 저장
+        selectedMemberUsername = username;
+        // 기본 정보 화면부터 표시
+        showProfileView("info");
+        // 팝업 열기
+        document.getElementById("member-profile-modal").hidden = false;
+    }
+
+    // 현재 선택된 회원
+    let selectedMemberUsername = null;
+    // 프로필 화면 전환
+    async function showProfileView(view) {
+
+        const infoView = document.getElementById("profile-info-view");
+        const timetableView =
+            document.getElementById("profile-timetable-view");
+
+        const infoTab = document.getElementById("profile-info-tab");
+        const timetableTab =
+            document.getElementById("profile-timetable-tab");
+
+        if (view === "info") {
+
+            infoView.hidden = false;
+            timetableView.hidden = true;
+
+            infoTab.classList.add("active");
+            timetableTab.classList.remove("active");
+
+            return;
+        }
+
+        infoView.hidden = true;
+        timetableView.hidden = false;
+        infoTab.classList.remove("active");
+        timetableTab.classList.add("active");
+        // 시간표 불러오기
+        await loadMemberTimetable();
+    }
+    // 회원 시간표 불러오기
+    async function loadMemberTimetable() {
+        const timetableContainer =
+            document.getElementById("member-timetable");
+        timetableContainer.innerHTML = "시간표를 불러오는 중...";
+        try {
+            const response = await fetch(
+                `/my-group/${currentRoomId}/members/${encodeURIComponent(selectedMemberUsername)}/timetable`
+            );
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("시간표 조회 오류:", response.status, errorText);
+                throw new Error("시간표 조회 실패");
+            }
+            const timetableData = await response.json();
+            console.log("불러온 시간표 데이터:", timetableData);
+            renderMemberTimetable(timetableData);
+        } catch (error) {
+            timetableContainer.textContent =
+                "시간표를 불러오지 못했습니다.";
+            console.error(error);
+        }
+    }
+
+    // 시간표 그리기
+    function renderMemberTimetable(timetableData) {
+        const container =
+            document.getElementById("member-timetable");
+        container.innerHTML = "";
+        const days = ["월", "화", "수", "목", "금"];
+        const occupiedSlots = new Set();
+        timetableData.forEach(slot => {
+            occupiedSlots.add(
+                `${slot.day}${slot.period}`
+            );
+
+        });
+        const table = document.createElement("table");
+        table.className = "profile-timetable-table";
+        // 요일 제목
+        const thead = document.createElement("thead");
+        const headerRow = document.createElement("tr");
+        const emptyHeader = document.createElement("th");
+        emptyHeader.textContent = "교시";
+        headerRow.appendChild(emptyHeader);
+        days.forEach(day => {
+            const th = document.createElement("th");
+            th.textContent = day;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+        // 1~9교시
+        const tbody = document.createElement("tbody");
+        for (let period = 1; period <= 9; period++) {
+            const row = document.createElement("tr");
+            const periodCell = document.createElement("th");
+            periodCell.textContent = period;
+            row.appendChild(periodCell);
+            days.forEach(day => {
+                const cell = document.createElement("td");
+
+                if (occupiedSlots.has(`${day}${period}`)) {
+                    cell.classList.add("class-time");
+                } else {
+                    cell.classList.add("free-time");
+                }
+                // 셀 내부에는 글자를 넣지 않음
+                row.appendChild(cell);
+            });
+            tbody.appendChild(row);
+        }
+        table.appendChild(tbody);
+        container.appendChild(table);
+    }
+    // 프로필 팝업 닫기
+    function closeMemberProfile() {
+        document.getElementById("member-profile-modal").hidden = true;
+        selectedMemberUsername = null;
+        showProfileView("info");
+    }
+    // 채팅방 소유권 이전
+    async function transferOwnership(targetUsername) {
+        if (currentRoomId === null) {
+            return;
+        }
+        const confirmTransfer = confirm(
+            "정말 해당 회원에게 채팅방 방장 권한을 이전하시겠습니까?\n" +
+            "이전 후에는 기존 방장이 일반 참여자가 됩니다."
+        );
+        if (!confirmTransfer) {
+            return;
+        }
+        const params = new URLSearchParams();
+        params.append("targetUsername", targetUsername);
+        try {
+            const response = await fetch(
+                `/my-group/${currentRoomId}/transfer-owner`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: params
+                }
+            );
+            const result = await response.text();
+            if (!response.ok) {
+                throw new Error(result || "소유권 이전에 실패했습니다.");
+            }
+            alert(result);
+            // 변경된 방장 정보를 다시 불러오기
+            await loadRoomMembers();
+        } catch (error) {
+            console.error("소유권 이전 실패:", error);
+            alert(error.message);
+
+        }
+    }
+
+    // 채팅방 참여자 추방
+    async function kickMember(targetUsername) {
+
+        if (currentRoomId === null) {
+            return;
+        }
+        // 추방 대상 이름 확인
+        const targetMember = roomMembers.find(
+            item => item.username === targetUsername
+        );
+        const targetName = targetMember
+            ? targetMember.name
+            : targetUsername;
+        // 추방 확인
+        const confirmKick = confirm(
+            `정말 ${targetName} 회원을 추방하시겠습니까?\n` +
+            "추방된 회원은 이 모임의 게시글과 채팅방에 접근할 수 없습니다."
+        );
+        if (!confirmKick) {
+            return;
+        }
+        const roomId = currentRoomId;
+        const params = new URLSearchParams();
+        params.append("targetUsername", targetUsername);
+        try {
+            const response = await fetch(
+                `/my-group/${roomId}/kick`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: params
+                }
+            );
+            const result = await response.text();
+
+            if (!response.ok) {
+                throw new Error(result || "회원 추방에 실패했습니다.");
+            }
+            alert(result);
+            // 추방된 회원의 프로필이 열려 있다면 닫기
+            if (selectedMemberUsername === targetUsername) {
+                closeMemberProfile();
+            }
+            // 같은 채팅방을 보고 있을 때 참여자 목록 갱신
+            if (String(currentRoomId) === String(roomId)) {
+                await loadRoomMembers();
+            }
+        } catch (error) {
+            console.error("회원 추방 실패:", error);
+            alert(error.message);
+
+        }
+    }
+
+    // 추방 해제
+    async function unbanMember(targetUsername, targetName) {
+
+        if (currentRoomId === null) {
+            return;
+        }
+
+        const confirmUnban = confirm(
+            `${targetName || targetUsername} 회원의 추방을 해제하시겠습니까?\n` +
+            "추방 해제 후 해당 회원은 직접 다시 가입할 수 있습니다."
+        );
+
+        if (!confirmUnban) {
+            return;
+        }
+
+        const roomId = currentRoomId;
+
+        const params = new URLSearchParams();
+        params.append("targetUsername", targetUsername);
+
+        try {
+
+            const response = await fetch(
+                `/my-group/${roomId}/unban`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: params
+                }
+            );
+
+            const result = await response.text();
+
+            if (!response.ok) {
+                throw new Error(result || "추방 해제에 실패했습니다.");
+            }
+
+            alert(result);
+
+            // 현재 채팅방이 그대로 선택되어 있다면 목록 갱신
+            if (String(currentRoomId) === String(roomId)) {
+                await loadBannedMembers();
+            }
+
+        } catch (error) {
+
+            console.error("추방 해제 실패:", error);
+            alert(error.message);
+        }
+    }
+
+    // 채팅방 전체 삭제
+    async function destroyChatRoom() {
+
+        if (currentRoomId === null) {
+            return;
+        }
+
+        // 삭제 확인
+        const confirmDestroy = confirm(
+            "정말 채팅방을 전체 삭제하시겠습니까?\n\n" +
+            "다음 데이터가 모두 삭제됩니다.\n" +
+            "- 채팅 메시지\n" +
+            "- 채팅방 참여자 정보\n" +
+            "- 추방 회원 기록\n" +
+            "- 연결된 게시글\n\n" +
+            "삭제한 데이터는 복구할 수 없습니다."
+        );
+
+        if (!confirmDestroy) {
+            return;
+        }
+
+        const roomId = currentRoomId;
+
+        try {
+
+            const response = await fetch(
+                `/my-group/${roomId}/destroy`,
+                {
+                    method: "POST"
+                }
+            );
+
+            const result = await response.text();
+
+            if (!response.ok) {
+                throw new Error(
+                    result || "채팅방 삭제에 실패했습니다."
+                );
+            }
+
+            // 메시지 자동 새로고침 중지
+            if (messageTimer !== null) {
+                clearInterval(messageTimer);
+                messageTimer = null;
+            }
+
+            // 왼쪽 모임 목록에서 삭제된 방 제거
+            const selectedCard = document.querySelector(
+                `.group-card[data-room-id="${roomId}"]`
+            );
+
+            if (selectedCard) {
+                selectedCard.remove();
+            }
+
+            // 현재 채팅방 정보 초기화
+            currentRoomId = null;
+            roomMembers = [];
+            selectedMemberUsername = null;
+
+            document.getElementById("chat-room-name").textContent =
+                "모임을 선택해주세요";
+
+            document.getElementById("chat-messages").innerHTML =
+                '<div class="welcome-message">' +
+                '왼쪽에서 모임을 선택하면<br>채팅방이 나타납니다.' +
+                '</div>';
+
+            document.getElementById("message-input").value = "";
+            document.getElementById("message-input").disabled = true;
+
+            document.getElementById("send-button").disabled = true;
+            document.getElementById("settings-button").disabled = true;
+
+            document.getElementById("settings-menu").hidden = true;
+
+            document.getElementById("banned-member-list").innerHTML = "";
+            document.getElementById("banned-member-section").hidden = true;
+
+            document.getElementById("destroy-room-button").hidden = true;
+
+            document.getElementById("member-profile-modal").hidden = true;
+
+            // 모임이 하나도 남지 않은 경우 안내 표시
+            if (
+                document.querySelectorAll(".group-card").length === 0 &&
+                !document.querySelector(".group-list .empty")
+            ) {
+                const emptyMessage = document.createElement("div");
+
+                emptyMessage.classList.add("empty");
+                emptyMessage.textContent = "아직 가입한 모임이 없습니다.";
+
+                document.querySelector(".group-list")
+                    .appendChild(emptyMessage);
+            }
+
+            alert(result);
+
+        } catch (error) {
+
+            console.error("채팅방 전체 삭제 실패:", error);
+            alert(error.message);
+        }
+    }
+
+
+</script>
+
+</body>
+</html>

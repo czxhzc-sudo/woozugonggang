@@ -1,0 +1,32 @@
+.help-text {
+    font-size: 12px;
+    color: #999999;
+    margin-top: 4px;
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.check-button {
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.check-result {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.success {
+    color: green;
+}
+
+.fail {
+    color: red;
+}
+.timetable-selected {
+    background-color: black;
+}

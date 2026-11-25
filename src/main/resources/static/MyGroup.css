@@ -1,0 +1,857 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f6f8;
+}
+
+.chat-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+/* =========================
+   왼쪽 : 모임 목록
+   ========================= */
+
+.group-sidebar {
+    width: 300px;
+    background-color: white;
+    border-right: 1px solid #ddd;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.sidebar-header h2 {
+    margin: 0;
+}
+
+.group-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.group-card {
+    padding: 18px 20px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.group-card:hover {
+    background-color: #f5f5f5;
+}
+
+.group-card.selected {
+    background-color: #e8f0ff;
+}
+
+.group-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.group-date {
+    font-size: 13px;
+    color: #888;
+}
+
+.empty {
+    padding: 30px 20px;
+    text-align: center;
+    color: #888;
+}
+
+
+/* =========================
+   오른쪽 : 채팅
+   ========================= */
+
+.chat-area {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    background-color: #f5f6f8;
+}
+
+.chat-header {
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 25px;
+
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+}
+
+.chat-header h2 {
+    margin: 0;
+}
+
+.chat-messages {
+    flex: 1;
+
+    padding: 25px;
+
+    overflow-y: auto;
+}
+
+.welcome-message {
+    text-align: center;
+    color: #999;
+    margin-top: 100px;
+    line-height: 1.7;
+}
+
+
+/* =========================
+   메시지 입력
+   ========================= */
+
+.chat-input-area {
+    display: flex;
+
+    padding: 15px;
+
+    background-color: white;
+    border-top: 1px solid #ddd;
+}
+
+.chat-input-area input {
+    flex: 1;
+
+    padding: 12px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    outline: none;
+}
+
+.chat-input-area button {
+    margin-left: 10px;
+
+    padding: 0 20px;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: #4f7cff;
+    color: white;
+
+    cursor: pointer;
+}
+
+.chat-input-area button:disabled {
+    background-color: #ccc;
+    cursor: default;
+}
+
+
+/* =========================
+   뒤로가기
+   ========================= */
+
+.back-button {
+    margin: 15px;
+
+    padding: 12px;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: #eee;
+
+    cursor: pointer;
+}
+
+/*채팅 메시지
+*/
+.message {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    max-width: 60%;
+    margin-bottom: 15px;
+   }
+
+.my-message {
+    margin-left: auto;
+    align-items: flex-end;
+}
+
+.other-message {
+    margin-right: auto;
+    align-items: flex-start;
+}
+
+.message-name {
+    font-size: 13px;
+    color: #777;
+
+    margin-bottom: 4px;
+}
+
+.message-text {
+    padding: 10px 14px;
+
+    border-radius: 12px;
+
+    background-color: white;
+
+    word-break: break-word;
+}
+
+.my-message .message-text {
+    background-color: #4f7cff;
+    color: white;
+}
+/* =========================
+   채팅방 설정 버튼
+   ========================= */
+
+.chat-header {
+    justify-content: space-between;
+}
+
+/* 설정 버튼과 메뉴를 감싸는 영역 */
+.chat-settings {
+    position: relative;
+}
+
+/* 설정 버튼 */
+#settings-button {
+    padding: 9px 16px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    background-color: white;
+    color: #333;
+
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+#settings-button:hover:not(:disabled) {
+    background-color: #f3f5f8;
+}
+
+#settings-button:disabled {
+    background-color: #eee;
+    color: #aaa;
+    cursor: default;
+}
+
+/* =========================
+   설정 팝업 메뉴
+   ========================= */
+
+#settings-menu {
+    position: absolute;
+
+    top: 45px;
+    right: 0;
+
+    width: 150px;
+
+    padding: 6px;
+
+    background-color: white;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+    z-index: 100;
+}
+
+/* hidden 속성이 설정된 메뉴는 숨김 */
+#settings-menu[hidden] {
+    display: none;
+}
+
+
+/* =========================
+   채팅방 탈퇴 버튼
+   ========================= */
+
+.leave-button {
+    width: 100%;
+
+    padding: 11px 10px;
+
+    border: none;
+    border-radius: 6px;
+
+    background-color: white;
+    color: #e04444;
+
+    text-align: left;
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+.leave-button:hover {
+    background-color: #fff0f0;
+}
+/* 안 읽은 메시지 표시*/
+
+/* 모임 이름과 숫자를 한 줄에 배치 */
+.group-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* 모임 이름 영역 */
+.group-name-row .group-name {
+    flex: 1;
+    min-width: 0;
+    margin-bottom: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 빨간색 안 읽은 메시지 배지 */
+.unread-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+
+    border-radius: 50%;
+
+    background-color: #e53935;
+    color: white;
+
+    font-size: 12px;
+    font-weight: bold;
+
+    flex-shrink: 0;
+}
+/* =========================
+   채팅방 설정 메뉴 확장
+   ========================= */
+
+#settings-menu {
+    width: 240px;
+    max-height: 75vh;
+    overflow-y: auto;
+}
+
+/* 참여자 영역 */
+.participant-section {
+    margin-top: 8px;
+    padding: 10px 5px 5px;
+    border-top: 1px solid #eee;
+}
+
+.participant-section h3 {
+    margin: 5px 5px 12px;
+    font-size: 14px;
+    color: #444;
+}
+
+.participant-loading {
+    padding: 10px 5px;
+    color: #888;
+    font-size: 13px;
+}
+
+/* 참여자 한 명 */
+.participant-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    padding: 10px;
+
+    border: none;
+    border-radius: 7px;
+    background: white;
+
+    cursor: pointer;
+    text-align: left;
+}
+
+.participant-card:hover {
+    background-color: #f2f5fa;
+}
+
+.participant-name {
+    font-size: 14px;
+    color: #333;
+}
+
+/* =========================
+   성별 아이콘
+   ========================= */
+
+.gender-icon {
+    position: relative;
+    display: inline-block;
+
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+
+    border-radius: 50%;
+    background-color: #999;
+    overflow: hidden;
+}
+
+/* 머리 */
+.gender-icon::before {
+    content: "";
+
+    position: absolute;
+    top: 6px;
+    left: 11px;
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+    background-color: white;
+}
+
+/* 몸 */
+.gender-icon::after {
+    content: "";
+
+    position: absolute;
+    bottom: -5px;
+    left: 6px;
+
+    width: 20px;
+    height: 17px;
+
+    border-radius: 12px 12px 4px 4px;
+    background-color: white;
+}
+
+.gender-icon.male {
+    background-color: #3988e8;
+}
+
+.gender-icon.female {
+    background-color: #e879b0;
+}
+
+/* =========================
+   회원 프로필 팝업 - 중앙 표시
+   ========================= */
+
+#member-profile-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 99999;
+}
+
+#member-profile-modal[hidden] {
+    display: none !important;
+}
+
+.profile-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.45);
+}
+
+.profile-popup {
+    position: relative;
+    z-index: 100000;
+
+    width: 380px;
+    max-width: calc(100vw - 30px);
+    max-height: 85vh;
+
+    margin: auto;
+    padding: 22px;
+
+    overflow-y: auto;
+
+    background-color: white;
+    border-radius: 15px;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.profile-popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+}
+
+.profile-popup-header h3 {
+    margin: 0;
+    font-size: 19px;
+}
+
+.profile-close-button {
+    border: none;
+    background: none;
+
+    font-size: 27px;
+    color: #777;
+
+    cursor: pointer;
+}
+
+/* 프로필 전환 버튼 */
+.profile-tabs {
+    display: flex;
+    gap: 8px;
+
+    margin-bottom: 22px;
+}
+
+.profile-tab {
+    flex: 1;
+
+    padding: 10px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    background-color: white;
+    color: #666;
+
+    cursor: pointer;
+}
+
+.profile-tab.active {
+    border-color: #4f7cff;
+    background-color: #edf2ff;
+    color: #3565dc;
+    font-weight: bold;
+}
+
+/* 프로필 상단 */
+.profile-user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.profile-user .gender-icon {
+    width: 65px;
+    height: 65px;
+}
+
+.profile-user .gender-icon::before {
+    top: 12px;
+    left: 23px;
+
+    width: 19px;
+    height: 19px;
+}
+
+.profile-user .gender-icon::after {
+    bottom: -8px;
+    left: 12px;
+
+    width: 41px;
+    height: 34px;
+}
+
+.profile-user h3 {
+    margin: 0;
+    font-size: 19px;
+}
+
+/* 프로필 정보 */
+.profile-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.profile-info-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 13px 5px;
+
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+.profile-info-item span {
+    color: #888;
+}
+
+.profile-info-item strong {
+    color: #333;
+    text-align: right;
+    word-break: break-word;
+}
+
+/* =========================
+   회원 시간표
+   ========================= */
+
+.profile-timetable-table {
+    width: 100%;
+    table-layout: fixed;
+
+    border-collapse: separate;
+    border-spacing: 3px;
+}
+
+.profile-timetable-table th {
+    height: 30px;
+
+    background-color: #f5f6f8;
+    color: #555;
+
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.profile-timetable-table td {
+    height: 32px;
+
+    border-radius: 4px;
+}
+
+/* 수업이 있는 칸 */
+.profile-timetable-table td.class-time {
+    background-color: #7fa8ff;
+}
+
+/* 공강 칸: 글자 없이 빈 공간으로 표시 */
+.profile-timetable-table td.free-time {
+    background-color: #f1f2f5;
+}
+/* 성별 아이콘 표시 보정 */
+.gender-icon {
+    display: inline-block;
+    flex: 0 0 32px;
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-user .gender-icon {
+    width: 65px;
+    height: 65px;
+    min-width: 65px;
+    flex-basis: 65px;
+}
+
+/* 시간표 표시 보정 */
+#profile-timetable-view {
+    width: 100%;
+    overflow-x: auto;
+}
+
+#profile-timetable-view[hidden] {
+    display: none;
+}
+
+.profile-timetable-table {
+    display: table;
+    width: 100%;
+    min-width: 260px;
+    border-collapse: separate;
+    border-spacing: 3px;
+}
+
+.profile-timetable-table th {
+    height: 35px;
+    text-align: center;
+}
+
+.profile-timetable-table td {
+    height: 38px;
+    min-width: 30px;
+}
+
+.profile-timetable-table td.class-time {
+    background-color: #7fa8ff;
+}
+
+.profile-timetable-table td.free-time {
+    background-color: #f1f2f5;
+}
+/* =========================
+   참여자 목록 및 방장 위임
+   ========================= */
+
+/* 참여자 한 명의 행 */
+.participant-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}
+
+/* 참여자 프로필 버튼 */
+.participant-row .participant-card {
+    flex: 1;
+    min-width: 0;
+}
+
+/* 방장 표시 */
+.owner-badge {
+    flex-shrink: 0;
+    padding: 3px 7px;
+    border-radius: 5px;
+
+    background-color: #edf2ff;
+    color: #3565dc;
+
+    font-size: 11px;
+    font-weight: bold;
+}
+
+/* 방장 위임 버튼 */
+.transfer-owner-button {
+    flex-shrink: 0;
+
+    padding: 7px 9px;
+
+    border: 1px solid #d5dfff;
+    border-radius: 6px;
+
+    background-color: white;
+    color: #3565dc;
+
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.transfer-owner-button:hover {
+    background-color: #edf2ff;
+}
+/* 회원 추방 버튼 */
+.kick-member-button {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    border: 1px solid #dc2626;
+    border-radius: 7px;
+    background-color: white;
+    color: #dc2626;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.kick-member-button:hover {
+    background-color: #fee2e2;
+}
+/* 추방 회원 관리 영역 */
+.banned-member-section {
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.banned-member-section h3 {
+    margin-bottom: 10px;
+}
+
+/* 추방 회원 한 명 */
+.banned-member-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 9px;
+    margin-bottom: 7px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+/* 추방 회원 정보 */
+.banned-member-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.banned-member-name {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.banned-member-date {
+    font-size: 11px;
+    color: #888;
+}
+
+/* 추방 해제 버튼 */
+.unban-button {
+    flex-shrink: 0;
+    padding: 6px 9px;
+    border: 1px solid #16a34a;
+    border-radius: 7px;
+    background: white;
+    color: #16a34a;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.unban-button:hover {
+    background: #dcfce7;
+}
+/* 채팅방 전체 삭제 버튼 */
+.destroy-room-button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #dc2626;
+    border-radius: 8px;
+    background-color: white;
+    color: #dc2626;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.destroy-room-button:hover {
+    background-color: #fee2e2;
+}
